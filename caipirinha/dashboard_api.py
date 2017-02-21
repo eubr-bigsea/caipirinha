@@ -27,10 +27,24 @@ class DashboardListApi(Resource):
     def post():
         result, result_code = dict(
             status="ERROR", message="Missing json in the request body"), 401
-        if request.json is not None:
+        if request.data is not None:
+            data = json.loads(request.data)
             request_schema = DashboardCreateRequestSchema()
             response_schema = DashboardItemResponseSchema()
-            form = request_schema.load(request.json)
+
+            params = {}
+            params.update(data)
+
+            user = params.pop('user')
+            params['user_id'] = user['id']
+            params['user_login'] = user['login']
+            params['user_name'] = user['name']
+            params['workflow_id'] = params.get('workflow', {}).get(
+                'id') or params.get('workflow_id')
+            params['workflow_name'] = params.get('workflow', {}).get(
+                'name') or params.get('workflow_name')
+
+            form = request_schema.load(params)
             if form.errors:
                 result, result_code = dict(
                     status="ERROR", message="Validation error",
@@ -38,6 +52,15 @@ class DashboardListApi(Resource):
             else:
                 try:
                     dashboard = form.data
+                    # fix foreign keys
+                    for i in xrange(len(dashboard.visualizations)):
+                        dashboard.visualizations[i].type = \
+                            VisualizationType.query.get(
+                                dashboard.visualizations[i].type.id)
+                        # dashboard.visualizations[i].type = None
+
+                    # import pdb
+                    # pdb.set_trace()
                     db.session.add(dashboard)
                     db.session.commit()
                     result, result_code = response_schema.dump(
@@ -90,7 +113,8 @@ class DashboardDetailApi(Resource):
         result_code = 404
 
         if request.json:
-            request_schema = partial_schema_factory(DashboardCreateRequestSchema)
+            request_schema = partial_schema_factory(
+                DashboardCreateRequestSchema)
             # Ignore missing fields to allow partial updates
             form = request_schema.load(request.json, partial=True)
             response_schema = DashboardItemResponseSchema()
@@ -114,6 +138,5 @@ class DashboardDetailApi(Resource):
                     db.session.rollback()
             else:
                 result = dict(status="ERROR", message="Invalid data",
-                            errors=form.errors)
+                              errors=form.errors)
         return result, result_code
-

@@ -37,7 +37,7 @@ api = Api(app)
 
 mappings = {
     '/dashboards': DashboardListApi,
-    '/dashboards/<int:data_source_id>': DashboardDetailApi,
+    '/dashboards/<int:dashboard_id>': DashboardDetailApi,
 }
 for path, view in mappings.iteritems():
     api.add_resource(view, path)

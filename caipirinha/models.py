@@ -40,6 +40,11 @@ class Dashboard(db.Model):
     user_name = Column(String(200), nullable=False)
     workflow_id = Column(Integer, nullable=False)
     workflow_name = Column(String(200))
+    __mapper_args__ = {
+        'version_id_col': version,
+    }
+
+    # Associations
 
     def __unicode__(self):
         return self.title

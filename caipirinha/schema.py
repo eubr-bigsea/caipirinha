@@ -25,6 +25,12 @@ def load_json(str_value):
 
 
 # region Protected\s*
+
+class UserCreateRequestSchema(Schema):
+    id = fields.Integer(required=True)
+    login = fields.String(required=True)
+    name = fields.String(required=True)
+
 # endregion
 
 
@@ -37,13 +43,19 @@ class DashboardListResponseSchema(Schema):
     updated = fields.DateTime(required=True, missing=datetime.datetime.utcnow,
                               default=datetime.datetime.utcnow)
     version = fields.Integer(required=True)
-    workflow_id = fields.Integer(required=True)
-    workflow_name = fields.String(required=False, allow_none=True)
+    visualizations = fields.Nested(
+        'caipirinha.schema.VisualizationListResponseSchema',
+        allow_none=True,
+        many=True)
     user = fields.Function(
         lambda x: {
             "id": x.user_id,
             "name": x.user_name,
             "login": x.user_login})
+    workflow = fields.Function(
+        lambda x: {
+            "id": x.workflow_id,
+            "name": x.workflow_name})
 
     class Meta:
         ordered = True
@@ -57,9 +69,19 @@ class DashboardCreateRequestSchema(Schema):
     user_name = fields.String(required=True)
     workflow_id = fields.Integer(required=True)
     workflow_name = fields.String(required=False, allow_none=True)
+    visualizations = fields.Nested(
+        'caipirinha.schema.VisualizationCreateRequestSchema',
+        allow_none=True,
+        many=True)
     user = fields.Nested(
         'caipirinha.schema.UserCreateRequestSchema',
         allow_none=True)
+
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of Dashboard"""
+        return Dashboard(**data)
 
     class Meta:
         ordered = True
@@ -74,13 +96,101 @@ class DashboardItemResponseSchema(Schema):
     updated = fields.DateTime(required=True, missing=datetime.datetime.utcnow,
                               default=datetime.datetime.utcnow)
     version = fields.Integer(required=True)
-    workflow_id = fields.Integer(required=True)
-    workflow_name = fields.String(required=False, allow_none=True)
+    visualizations = fields.Nested(
+        'caipirinha.schema.VisualizationItemResponseSchema',
+        allow_none=True,
+        many=True)
     user = fields.Function(
         lambda x: {
             "id": x.user_id,
             "name": x.user_name,
             "login": x.user_login})
+    workflow = fields.Function(
+        lambda x: {
+            "id": x.workflow_id,
+            "name": x.workflow_name})
+
+    class Meta:
+        ordered = True
+
+
+class VisualizationCreateRequestSchema(Schema):
+    """ JSON serialization schema """
+    id = fields.String(required=True)
+    suggested_width = fields.Integer(required=True, missing=12,
+                                     default=12)
+    type = fields.Nested(
+        'caipirinha.schema.VisualizationTypeCreateRequestSchema',
+        required=True)
+
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of Visualization"""
+        return Visualization(**data)
+
+    class Meta:
+        ordered = True
+
+
+class VisualizationListResponseSchema(Schema):
+    """ JSON serialization schema """
+    id = fields.String(required=True)
+    suggested_width = fields.Integer(required=True, missing=12,
+                                     default=12)
+    type = fields.Nested(
+        'caipirinha.schema.VisualizationTypeListResponseSchema',
+        required=True)
+
+    class Meta:
+        ordered = True
+
+
+class VisualizationItemResponseSchema(Schema):
+    """ JSON serialization schema """
+    id = fields.String(required=True)
+    suggested_width = fields.Integer(required=True, missing=12,
+                                     default=12)
+    type = fields.Nested(
+        'caipirinha.schema.VisualizationTypeItemResponseSchema',
+        required=True)
+
+    class Meta:
+        ordered = True
+
+
+class VisualizationTypeCreateRequestSchema(Schema):
+    """ JSON serialization schema """
+    id = fields.Integer(required=True)
+    icon = fields.String(required=False, allow_none=True)
+
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of VisualizationType"""
+        return VisualizationType(**data)
+
+    class Meta:
+        ordered = True
+
+
+class VisualizationTypeItemResponseSchema(Schema):
+    """ JSON serialization schema """
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
+    help = fields.String(required=True)
+    icon = fields.String(required=False, allow_none=True)
+
+    class Meta:
+        ordered = True
+
+
+class VisualizationTypeListResponseSchema(Schema):
+    """ JSON serialization schema """
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
+    help = fields.String(required=True)
+    icon = fields.String(required=False, allow_none=True)
 
     class Meta:
         ordered = True
