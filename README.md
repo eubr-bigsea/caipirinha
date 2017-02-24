@@ -25,7 +25,7 @@ Edit `caipirinha.yaml` according to your database config
 caipirinha:
     debug: true
     environment: prod
-    port: 3323
+    port: 3324
     servers:
         database_url: mysql+pymysql://user:secret@server:3306/caipirinha
         redis_url: redis://localhost:6379
