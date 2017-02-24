@@ -43,6 +43,8 @@ class DashboardListResponseSchema(Schema):
     updated = fields.DateTime(required=True, missing=datetime.datetime.utcnow,
                               default=datetime.datetime.utcnow)
     version = fields.Integer(required=True)
+    task_id = fields.String(required=True)
+    job_id = fields.Integer(required=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationListResponseSchema',
         allow_none=True,
@@ -69,6 +71,8 @@ class DashboardCreateRequestSchema(Schema):
     user_name = fields.String(required=True)
     workflow_id = fields.Integer(required=True)
     workflow_name = fields.String(required=False, allow_none=True)
+    task_id = fields.String(required=True)
+    job_id = fields.Integer(required=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationCreateRequestSchema',
         allow_none=True,
@@ -96,6 +100,8 @@ class DashboardItemResponseSchema(Schema):
     updated = fields.DateTime(required=True, missing=datetime.datetime.utcnow,
                               default=datetime.datetime.utcnow)
     version = fields.Integer(required=True)
+    task_id = fields.String(required=True)
+    job_id = fields.Integer(required=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationItemResponseSchema',
         allow_none=True,
@@ -116,7 +122,9 @@ class DashboardItemResponseSchema(Schema):
 
 class VisualizationCreateRequestSchema(Schema):
     """ JSON serialization schema """
-    id = fields.String(required=True)
+    id = fields.Integer(required=True)
+    task_id = fields.String(required=True)
+    job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
     type = fields.Nested(
@@ -135,7 +143,9 @@ class VisualizationCreateRequestSchema(Schema):
 
 class VisualizationListResponseSchema(Schema):
     """ JSON serialization schema """
-    id = fields.String(required=True)
+    id = fields.Integer(required=True)
+    task_id = fields.String(required=True)
+    job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
     type = fields.Nested(
@@ -148,7 +158,9 @@ class VisualizationListResponseSchema(Schema):
 
 class VisualizationItemResponseSchema(Schema):
     """ JSON serialization schema """
-    id = fields.String(required=True)
+    id = fields.Integer(required=True)
+    task_id = fields.String(required=True)
+    job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
     type = fields.Nested(

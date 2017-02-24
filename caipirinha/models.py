@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import json
 import datetime
-
+import json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, \
     Enum, DateTime, Numeric, Text, Unicode, UnicodeText
@@ -24,22 +23,18 @@ class Dashboard(db.Model):
     # Fields
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
-    created = Column(
-        DateTime,
-        nullable=False,
-        default=datetime.datetime.utcnow,
-        onupdate=datetime.datetime.utcnow)
-    updated = Column(
-        DateTime,
-        nullable=False,
-        default=datetime.datetime.utcnow,
-        onupdate=datetime.datetime.utcnow)
+    created = Column(DateTime,
+                     default=datetime.datetime.utcnow, nullable=False, onupdate=datetime.datetime.utcnow)
+    updated = Column(DateTime,
+                     default=datetime.datetime.utcnow, nullable=False, onupdate=datetime.datetime.utcnow)
     version = Column(Integer, nullable=False)
     user_id = Column(Integer, nullable=False)
     user_login = Column(String(50), nullable=False)
     user_name = Column(String(200), nullable=False)
     workflow_id = Column(Integer, nullable=False)
     workflow_name = Column(String(200))
+    task_id = Column(String(200), nullable=False)
+    job_id = Column(Integer, nullable=False)
     __mapper_args__ = {
         'version_id_col': version,
     }
@@ -58,9 +53,11 @@ class Visualization(db.Model):
     __tablename__ = 'visualization'
 
     # Fields
-    id = Column(String(250), primary_key=True,
-                autoincrement=False)
-    suggested_width = Column(Integer, nullable=False, default=12)
+    id = Column(Integer, primary_key=True)
+    task_id = Column(String(200), nullable=False)
+    job_id = Column(Integer, nullable=False)
+    suggested_width = Column(Integer,
+                             default=12, nullable=False)
 
     # Associations
     dashboard_id = Column(Integer,
@@ -74,7 +71,7 @@ class Visualization(db.Model):
     type = relationship("VisualizationType", foreign_keys=[type_id])
 
     def __unicode__(self):
-        return self.suggested_width
+        return self.task_id
 
     def __repr__(self):
         return '<Instance {}: {}>'.format(self.__class__, self.id)
