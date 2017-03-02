@@ -122,7 +122,6 @@ class DashboardItemResponseSchema(Schema):
 
 class VisualizationCreateRequestSchema(Schema):
     """ JSON serialization schema """
-    id = fields.Integer(required=True)
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,

@@ -2,9 +2,14 @@
 
 #caipirinha:
 #    debug: true
+#    storage_id: "limonero storage id for visualization data storage"
 #    servers:
 #        database_url: mysql+pymysql://user:password@server:port/database
 #        redis_url: redis://redis_server:6379
+#    services:
+#        limonero:
+#            url: http://server/limonero
+#            auth_token: "authorization_token"
 #    config:
 #        SQLALCHEMY_POOL_SIZE: 10
 #        SQLALCHEMY_POOL_RECYCLE: 240
