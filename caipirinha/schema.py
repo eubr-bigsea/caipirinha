@@ -123,6 +123,7 @@ class DashboardItemResponseSchema(Schema):
 class VisualizationCreateRequestSchema(Schema):
     """ JSON serialization schema """
     task_id = fields.String(required=True)
+    title = fields.String(required=True)
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
@@ -144,6 +145,7 @@ class VisualizationListResponseSchema(Schema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     task_id = fields.String(required=True)
+    title = fields.String(required=True)
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
@@ -159,6 +161,7 @@ class VisualizationItemResponseSchema(Schema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     task_id = fields.String(required=True)
+    title = fields.String(required=True)
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)

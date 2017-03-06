@@ -50,18 +50,25 @@ class VisualizationDetailApi(Resource):
                 b'{job_id}-{task_id}'.format(job_id=job_id, task_id=task_id))
             # Close HBase connection
             connection.close()
+            if row:
+                data = json.loads(row.get('cf:data'))
+                labels = [l.strip() for l in
+                          row.get('cf:column_names', '').split(',')]
+                attributes = json.loads(row.get('cf:schema'))['fields']
+            else:
+                data = []
+                labels = []
+                attributes = []
 
-            data = json.loads(row.get('cf:data'))
             result = dict(
                 job_id=job_id, task_id=task_id,
                 suggested_width=visualization.suggested_width,
                 type=dict(id=visualization.type_id,
                           icon=visualization.type.icon,
                           name=visualization.type.name),
-                title=row.get('cf:title'),
-                labels=[l.strip() for l in
-                        row.get('cf:column_names', '').split(',')],
-                attributes=json.loads(row.get('cf:schema'))['fields'],
+                title=row.get('cf:title') if row else '',
+                labels=labels,
+                attributes=attributes,
                 data=data)
         # In case of no visualization found
         else:

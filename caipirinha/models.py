@@ -55,6 +55,7 @@ class Visualization(db.Model):
     # Fields
     id = Column(Integer, primary_key=True)
     task_id = Column(String(200), nullable=False)
+    title = Column(String(200), nullable=False)
     job_id = Column(Integer, nullable=False)
     suggested_width = Column(Integer,
                              default=12, nullable=False)
