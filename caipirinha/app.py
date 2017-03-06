@@ -17,6 +17,7 @@ from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
 from models import db
+from visualization_api import VisualizationDetailApi
 
 sqlalchemy_utils.i18n.get_locale = get_locale
 
@@ -38,6 +39,7 @@ api = Api(app)
 mappings = {
     '/dashboards': DashboardListApi,
     '/dashboards/<int:dashboard_id>': DashboardDetailApi,
+    '/visualizations/<int:job_id>/<task_id>': VisualizationDetailApi,
 }
 for path, view in mappings.iteritems():
     api.add_resource(view, path)
@@ -73,6 +75,7 @@ def main(is_main_module):
         app.config['SQLALCHEMY_POOL_RECYCLE'] = 240
 
         app.config.update(config.get('config', {}))
+        app.config['CAIPIRINHA_CONFIG'] = config
 
         db.init_app(app)
 

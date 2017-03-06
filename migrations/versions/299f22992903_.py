@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: fa3175a4b535
+Revision ID: 299f22992903
 Revises: 
-Create Date: 2017-02-20 15:25:46.835194
+Create Date: 2017-02-24 11:55:55.534901
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fa3175a4b535'
+revision = '299f22992903'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,6 +29,8 @@ def upgrade():
     sa.Column('user_name', sa.String(length=200), nullable=False),
     sa.Column('workflow_id', sa.Integer(), nullable=False),
     sa.Column('workflow_name', sa.String(length=200), nullable=True),
+    sa.Column('task_id', sa.String(length=200), nullable=False),
+    sa.Column('job_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('visualization_type',
@@ -39,7 +41,9 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('visualization',
-    sa.Column('id', sa.String(length=250), autoincrement=False, nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('task_id', sa.String(length=200), nullable=False),
+    sa.Column('job_id', sa.Integer(), nullable=False),
     sa.Column('suggested_width', sa.Integer(), nullable=False),
     sa.Column('dashboard_id', sa.Integer(), nullable=False),
     sa.Column('type_id', sa.Integer(), nullable=False),
