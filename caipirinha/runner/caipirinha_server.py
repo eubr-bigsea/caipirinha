@@ -10,6 +10,7 @@ import os
 import sqlalchemy_utils
 import yaml
 from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
+from caipirinha.visualization_api import VisualizationDetailApi
 from caipirinha.models import Dashboard
 from flask import Flask, request
 from flask_admin import Admin
@@ -18,6 +19,7 @@ from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
 from caipirinha.models import db
+from caipirinha.runner import configuration
 
 sqlalchemy_utils.i18n.get_locale = get_locale
 
@@ -39,10 +41,10 @@ api = Api(app)
 mappings = {
     '/dashboards': DashboardListApi,
     '/dashboards/<int:dashboard_id>': DashboardDetailApi,
+    '/visualizations/<int:job_id>/<string:task_id>': VisualizationDetailApi,
 }
 for path, view in mappings.iteritems():
     api.add_resource(view, path)
-
 
 # @app.before_request
 def before():
@@ -67,26 +69,28 @@ def main(is_main_module):
     logger = logging.getLogger(__name__)
     if config_file:
         with open(config_file) as f:
-            config = yaml.load(f)['caipirinha']
+            config = yaml.load(f)
+            configuration.set_config(config)
+            caipirinha_config = config['caipirinha']
 
         app.config["RESTFUL_JSON"] = {"cls": app.json_encoder}
 
-        server_config = config.get('servers', {})
+        server_config = caipirinha_config.get('servers', {})
         app.config['SQLALCHEMY_DATABASE_URI'] = server_config.get(
             'database_url')
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         app.config['SQLALCHEMY_POOL_SIZE'] = 10
         app.config['SQLALCHEMY_POOL_RECYCLE'] = 240
 
-        app.config.update(config.get('config', {}))
+        app.config.update(caipirinha_config.get('config', {}))
 
         db.init_app(app)
 
-        port = int(config.get('port', 5000))
-        logger.debug('Running in %s mode', config.get('environment'))
+        port = int(caipirinha_config.get('port', 5000))
+        logger.debug('Running in %s mode', caipirinha_config.get('environment'))
 
         if is_main_module:
-            if config.get('environment', 'dev') == 'dev':
+            if caipirinha_config.get('environment', 'dev') == 'dev':
                 admin.add_view(ModelView(Dashboard, db.session))
                 app.run(debug=True, port=port)
             else:
