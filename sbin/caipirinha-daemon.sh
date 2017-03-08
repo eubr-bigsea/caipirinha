@@ -51,6 +51,13 @@ case $cmd_option in
       echo "Caipirinha server started, logging to $log (pid=$caipirinha_server_pid)"
       ;;
 
+   (startf)
+      trap "$0 stop" SIGINT SIGTERM
+      $0 start
+      sleep infinity &
+      wait
+      ;;
+
    (stop)
 
       if [ -f $pid ]; then
