@@ -54,7 +54,9 @@ class VisualizationDetailApi(Resource):
                 data = json.loads(row.get('cf:data'))
                 labels = [l.strip() for l in
                           row.get('cf:column_names', '').split(',')]
-                attributes = json.loads(row.get('cf:schema'))['fields']
+                schema = row.get('cf:schema')
+                if schema != '':
+                    attributes = json.loads(schema)['fields']
             else:
                 data = []
                 labels = []
