@@ -53,8 +53,15 @@ case $cmd_option in
 
    (startf)
       trap "$0 stop" SIGINT SIGTERM
-      $0 start
-      sleep infinity &
+      # set python path
+      PYTHONPATH=$CAIPIRINHA_HOME:$PYTHONPATH python $CAIPIRINHA_HOME/caipirinha/runner/caipirinha_server.py \
+         -c $CAIPIRINHA_HOME/conf/caipirinha-config.yaml &
+      caipirinha_server_pid=$!
+
+      # persist the pid
+      echo $caipirinha_server_pid > $pid
+
+      echo "Caipirinha server started, logging to $log (pid=$caipirinha_server_pid)"
       wait
       ;;
 
