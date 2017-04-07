@@ -41,6 +41,8 @@ case $cmd_option in
 
    (start)
       # set python path
+      PYTHONPATH=$CAIPIRINHA_HOME:$PYTHONPATH python $CAIPIRINHA_HOME/caipirinha/manage.py \
+         db upgrade || true
       PYTHONPATH=$CAIPIRINHA_HOME:$PYTHONPATH nohup -- python $CAIPIRINHA_HOME/caipirinha/runner/caipirinha_server.py \
          -c $CAIPIRINHA_HOME/conf/caipirinha-config.yaml >> $log 2>&1 < /dev/null &
       caipirinha_server_pid=$!
@@ -54,6 +56,8 @@ case $cmd_option in
    (startf)
       trap "$0 stop" SIGINT SIGTERM
       # set python path
+      PYTHONPATH=$CAIPIRINHA_HOME:$PYTHONPATH python $CAIPIRINHA_HOME/caipirinha/manage.py \
+         db upgrade || true
       PYTHONPATH=$CAIPIRINHA_HOME:$PYTHONPATH python $CAIPIRINHA_HOME/caipirinha/runner/caipirinha_server.py \
          -c $CAIPIRINHA_HOME/conf/caipirinha-config.yaml &
       caipirinha_server_pid=$!
