@@ -1,9 +1,20 @@
-FROM python:2.7-onbuild
-MAINTAINER Guilherme Maluf <guimalufb@gmail.com>
+FROM ubuntu:16.04
+MAINTAINER Vinicius Dias <viniciusvdias@dcc.ufmg.br>
 
-EXPOSE 3324
-ENV CAIPIRINHA_CONFIG="./caipirinha.yaml"
-ENV PYTHONPATH="."
-RUN chmod a+x "./run.sh"
+# Install python and jdk
+RUN apt-get update \
+   && apt-get install -qy python-pip
 
-CMD [ "./run.sh" ]
+# Install juicer
+ENV CAIPIRINHA_HOME /usr/local/caipirinha
+RUN mkdir -p $CAIPIRINHA_HOME/conf
+RUN mkdir -p $CAIPIRINHA_HOME/sbin
+RUN mkdir -p $CAIPIRINHA_HOME/caipirinha
+ADD sbin $CAIPIRINHA_HOME/sbin
+ADD caipirinha $CAIPIRINHA_HOME/caipirinha
+
+# Install juicer requirements and entrypoint
+ADD requirements.txt $CAIPIRINHA_HOME
+RUN pip install -r $CAIPIRINHA_HOME/requirements.txt
+EXPOSE 5000
+CMD ["/usr/local/caipirinha/sbin/caipirinha-daemon.sh", "startf"]

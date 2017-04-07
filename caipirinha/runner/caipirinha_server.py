@@ -123,7 +123,7 @@ if __name__ == '__main__':
     if app.debug:
         app.run(debug=True)
     else:        
-        port = int(app.config['STAND_CONFIG'].get('port', 5000))
+        port = int(app.config['CAIPIRINHA_CONFIG'].get('port', 5000))
 
         # noinspection PyUnresolvedReferences
         eventlet.wsgi.server(eventlet.listen(('', port)),
