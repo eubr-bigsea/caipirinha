@@ -60,6 +60,7 @@ def get_locale():
 def main(is_main_module):
     config_file = os.environ.get('CAIPIRINHA_CONFIG')
 
+    os.chdir(os.environ.get('CAIPIRINHA_HOME', '.'))
     logger = logging.getLogger(__name__)
     if config_file:
         with open(config_file) as f:
