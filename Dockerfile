@@ -7,11 +7,14 @@ RUN apt-get update \
 
 # Install juicer
 ENV CAIPIRINHA_HOME /usr/local/caipirinha
+ENV CAIPIRINHA_CONFIG $CAIPIRINHA_HOME/conf/caipirinha-config.yaml
 RUN mkdir -p $CAIPIRINHA_HOME/conf
 RUN mkdir -p $CAIPIRINHA_HOME/sbin
 RUN mkdir -p $CAIPIRINHA_HOME/caipirinha
 ADD sbin $CAIPIRINHA_HOME/sbin
 ADD caipirinha $CAIPIRINHA_HOME/caipirinha
+ADD migrations $CAIPIRINHA_HOME/migrations
+ADD logging_config.ini $STAND_HOME/logging_config.ini
 
 # Install juicer requirements and entrypoint
 ADD requirements.txt $CAIPIRINHA_HOME
