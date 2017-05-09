@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-}
+import logging
+
 from app_auth import requires_auth
 from flask import request, current_app
 from flask_restful import Resource
 from schema import *
 
+log = logging.getLogger(__name__)
 
 class DashboardListApi(Resource):
     """ REST API for listing class Dashboard """
@@ -66,6 +69,7 @@ class DashboardListApi(Resource):
                     result, result_code = response_schema.dump(
                         dashboard).data, 200
                 except Exception, e:
+                    log.exception('Error in POST')
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
                     if current_app.debug:
@@ -99,6 +103,7 @@ class DashboardDetailApi(Resource):
                 db.session.commit()
                 result, result_code = dict(status="OK", message="Deleted"), 200
             except Exception, e:
+                log.exception('Error in DELETE')
                 result, result_code = dict(status="ERROR",
                                            message="Internal error"), 500
                 if current_app.debug:
@@ -131,6 +136,7 @@ class DashboardDetailApi(Resource):
                     else:
                         result = dict(status="ERROR", message="Not found")
                 except Exception, e:
+                    log.exception('Error in PATCH')
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
                     if current_app.debug:

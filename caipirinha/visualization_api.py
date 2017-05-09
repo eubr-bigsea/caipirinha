@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-}
 
-import json
+import logging
 import urlparse
 
 import happybase
@@ -9,6 +9,8 @@ from caipirinha.service import limonero_service
 from flask import current_app
 from flask_restful import Resource
 from schema import *
+
+log = logging.getLogger(__name__)
 
 
 class VisualizationDetailApi(Resource):
