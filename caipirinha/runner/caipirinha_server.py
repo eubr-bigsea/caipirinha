@@ -83,6 +83,7 @@ def main(is_main_module):
         app.config['SQLALCHEMY_POOL_RECYCLE'] = 240
 
         app.config.update(caipirinha_config.get('config', {}))
+        app.config['CAIPIRINHA_CONFIG'] = caipirinha_config
 
         db.init_app(app)
 
