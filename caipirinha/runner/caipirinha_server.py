@@ -10,7 +10,8 @@ import os
 import sqlalchemy_utils
 import yaml
 from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
-from caipirinha.visualization_api import VisualizationDetailApi
+from caipirinha.visualization_api import VisualizationDetailApi, \
+    VisualizationListApi
 from caipirinha.models import Dashboard
 from flask import Flask, request
 from flask_admin import Admin
@@ -42,6 +43,7 @@ mappings = {
     '/dashboards': DashboardListApi,
     '/dashboards/<int:dashboard_id>': DashboardDetailApi,
     '/visualizations/<int:job_id>/<string:task_id>': VisualizationDetailApi,
+    '/visualizations': VisualizationListApi,
 }
 for path, view in mappings.iteritems():
     api.add_resource(view, path)
