@@ -8,6 +8,7 @@ from schema import *
 
 log = logging.getLogger(__name__)
 
+
 class DashboardListApi(Resource):
     """ REST API for listing class Dashboard """
 

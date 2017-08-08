@@ -7,6 +7,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, \
 from sqlalchemy import event
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy_i18n import make_translatable, translation_base, Translatable
 
 make_translatable(options={'locales': ['pt', 'en', 'es'],
@@ -24,9 +25,11 @@ class Dashboard(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
     created = Column(DateTime,
-                     default=datetime.datetime.utcnow, nullable=False, onupdate=datetime.datetime.utcnow)
+                     default=datetime.datetime.utcnow, nullable=False,
+                     onupdate=datetime.datetime.utcnow)
     updated = Column(DateTime,
-                     default=datetime.datetime.utcnow, nullable=False, onupdate=datetime.datetime.utcnow)
+                     default=datetime.datetime.utcnow, nullable=False,
+                     onupdate=datetime.datetime.utcnow)
     version = Column(Integer, nullable=False)
     user_id = Column(Integer, nullable=False)
     user_login = Column(String(50), nullable=False)
@@ -62,14 +65,17 @@ class Visualization(db.Model):
 
     # Associations
     dashboard_id = Column(Integer,
-                          ForeignKey("dashboard.id"), nullable=False)
-    dashboard = relationship("Dashboard", foreign_keys=[dashboard_id],
-                             backref=backref(
-                                 "visualizations",
-                                 cascade="all, delete-orphan"))
+                          ForeignKey("dashboard.id"))
+    dashboard = relationship(
+        "Dashboard",
+        foreign_keys=[dashboard_id],
+        backref=backref("visualizations",
+                        cascade="all, delete-orphan"))
     type_id = Column(Integer,
                      ForeignKey("visualization_type.id"), nullable=False)
-    type = relationship("VisualizationType", foreign_keys=[type_id])
+    type = relationship(
+        "VisualizationType",
+        foreign_keys=[type_id])
 
     def __unicode__(self):
         return self.task_id

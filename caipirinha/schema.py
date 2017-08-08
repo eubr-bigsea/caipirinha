@@ -4,7 +4,7 @@ import json
 from copy import deepcopy
 from marshmallow import Schema, fields, post_load
 from marshmallow.validate import OneOf
-from models import *
+from caipirinha.models import *
 
 
 def partial_schema_factory(schema_cls):
@@ -58,6 +58,12 @@ class DashboardListResponseSchema(Schema):
         lambda x: {
             "id": x.workflow_id,
             "name": x.workflow_name})
+
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of Dashboard"""
+        return Dashboard(**data)
 
     class Meta:
         ordered = True
@@ -116,6 +122,12 @@ class DashboardItemResponseSchema(Schema):
             "id": x.workflow_id,
             "name": x.workflow_name})
 
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of Dashboard"""
+        return Dashboard(**data)
+
     class Meta:
         ordered = True
 
@@ -153,6 +165,12 @@ class VisualizationListResponseSchema(Schema):
         'caipirinha.schema.VisualizationTypeListResponseSchema',
         required=True)
 
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of Visualization"""
+        return Visualization(**data)
+
     class Meta:
         ordered = True
 
@@ -168,6 +186,12 @@ class VisualizationItemResponseSchema(Schema):
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeItemResponseSchema',
         required=True)
+
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of Visualization"""
+        return Visualization(**data)
 
     class Meta:
         ordered = True
@@ -195,6 +219,12 @@ class VisualizationTypeItemResponseSchema(Schema):
     help = fields.String(required=True)
     icon = fields.String(required=False, allow_none=True)
 
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of VisualizationType"""
+        return VisualizationType(**data)
+
     class Meta:
         ordered = True
 
@@ -205,6 +235,12 @@ class VisualizationTypeListResponseSchema(Schema):
     name = fields.String(required=True)
     help = fields.String(required=True)
     icon = fields.String(required=False, allow_none=True)
+
+    # noinspection PyUnresolvedReferences
+    @post_load
+    def make_object(self, data):
+        """ Deserialize data into an instance of VisualizationType"""
+        return VisualizationType(**data)
 
     class Meta:
         ordered = True
