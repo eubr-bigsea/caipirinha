@@ -62,6 +62,7 @@ class Visualization(db.Model):
     job_id = Column(Integer, nullable=False)
     suggested_width = Column(Integer,
                              default=12, nullable=False)
+    data = Column(Text)
 
     # Associations
     dashboard_id = Column(Integer,

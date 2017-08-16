@@ -19,9 +19,15 @@ class DashboardListApi(Resource):
             only = [f.strip() for f in
                     request.args.get('fields').split(',')]
         else:
-            only = ('id', 'name') if request.args.get(
+            only = ('id', 'title') if request.args.get(
                 'simple', 'false') == 'true' else None
-        dashboards = Dashboard.query.all()
+
+        dashboards = Dashboard.query
+
+        user_id_filter = request.args.get('user_id')
+        if user_id_filter:
+            dashboards = dashboards.filter(
+                Dashboard.user_id == user_id_filter)
 
         return DashboardListResponseSchema(
             many=True, only=only).dump(dashboards).data

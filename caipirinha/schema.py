@@ -139,6 +139,7 @@ class VisualizationCreateRequestSchema(Schema):
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
+    data = fields.String(required=False, allow_none=True)
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeCreateRequestSchema',
         required=True)
@@ -161,6 +162,7 @@ class VisualizationListResponseSchema(Schema):
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
+    data = fields.String(required=False, allow_none=True)
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeListResponseSchema',
         required=True)
@@ -183,6 +185,7 @@ class VisualizationItemResponseSchema(Schema):
     job_id = fields.Integer(required=True)
     suggested_width = fields.Integer(required=True, missing=12,
                                      default=12)
+    data = fields.String(required=False, allow_none=True)
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeItemResponseSchema',
         required=True)
