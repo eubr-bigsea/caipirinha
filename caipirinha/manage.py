@@ -1,7 +1,7 @@
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
-from caipirinha.app import app
+from caipirinha.runner.caipirinha_server import app
 from caipirinha.models import db
 
 migrate = Migrate(app, db)
