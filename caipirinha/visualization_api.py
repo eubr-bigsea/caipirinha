@@ -125,7 +125,7 @@ class VisualizationDetailApi(Resource):
                 title=visualization.title,
                 # labels=labels,
                 # attributes=attributes,
-                data=data.get('data', data),
+                data=data if isinstance(data, list) else data.get('data', data),
                 legend=data.get('legend'),
                 tooltip=data.get('tooltip'),
                 x=data.get('x'),
