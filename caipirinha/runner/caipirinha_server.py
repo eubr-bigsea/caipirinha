@@ -114,13 +114,13 @@ if __name__ == '__main__':
 
     eventlet.monkey_patch(all=True)
 
-    from stand.factory import create_app, create_babel_i18n, \
+    from caipirinha.factory import create_app, create_babel_i18n, \
         create_socket_io_app, create_redis_store
 
     app = create_app(config_file=args.config)
     babel = create_babel_i18n(app)
     # socketio, socketio_app = create_socket_io_app(app)
-    stand_socket_io = StandSocketIO(app)
+    caipirinha_socket_io = StandSocketIO(app)
     redis_store = create_redis_store(app)
 
     if app.debug:
@@ -130,4 +130,4 @@ if __name__ == '__main__':
 
         # noinspection PyUnresolvedReferences
         eventlet.wsgi.server(eventlet.listen(('', port)),
-                         stand_socket_io.socket_app)
+                         caipirinha_socket_io.socket_app)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-}
 import logging
+import math
 
 from app_auth import requires_auth
 from flask import request, current_app
@@ -9,28 +10,53 @@ from schema import *
 log = logging.getLogger(__name__)
 
 
+def _get_dashboards(dashboards):
+    # return dashboards.filter(Dashboard.user_id == g.user.id)
+    return dashboards
+
+
 class DashboardListApi(Resource):
     """ REST API for listing class Dashboard """
 
     @staticmethod
     @requires_auth
     def get():
+        only = None if request.args.get('simple') != 'true' else ('id',)
         if request.args.get('fields'):
-            only = [f.strip() for f in
-                    request.args.get('fields').split(',')]
+            only = tuple(
+                [x.strip() for x in request.args.get('fields').split(',')])
+
+        dashboards = _get_dashboards(Dashboard.query)
+
+        sort = request.args.get('sort', 'name')
+        if sort not in ['title']:
+            sort = 'id'
+        sort_option = getattr(Dashboard, sort)
+        if request.args.get('asc', 'true') == 'false':
+            sort_option = sort_option.desc()
+
+        dashboards = dashboards.order_by(sort_option)
+
+        page = request.args.get('page') or '1'
+
+        if page is not None and page.isdigit():
+            page_size = int(request.args.get('size', 20))
+            page = int(page)
+            pagination = dashboards.paginate(page, page_size, True)
+            result = {
+                'data': DashboardListResponseSchema(many=True, only=only).dump(
+                    pagination.items).data,
+                'pagination': {
+                    'page': page, 'size': page_size,
+                    'total': pagination.total,
+                    'pages': int(math.ceil(1.0 * pagination.total / page_size))}
+            }
         else:
-            only = ('id', 'title') if request.args.get(
-                'simple', 'false') == 'true' else None
+            result = {
+                'data': DashboardListResponseSchema(many=True, only=only).dump(
+                    dashboards).data}
 
-        dashboards = Dashboard.query
-
-        user_id_filter = request.args.get('user_id')
-        if user_id_filter:
-            dashboards = dashboards.filter(
-                Dashboard.user_id == user_id_filter)
-
-        return DashboardListResponseSchema(
-            many=True, only=only).dump(dashboards).data
+        return result
 
     @staticmethod
     @requires_auth
@@ -94,7 +120,10 @@ class DashboardDetailApi(Resource):
     def get(dashboard_id):
         dashboard = Dashboard.query.get(dashboard_id)
         if dashboard is not None:
-            return DashboardItemResponseSchema().dump(dashboard).data
+            result = DashboardItemResponseSchema().dump(dashboard).data
+            for visualization in result['visualizations']:
+                visualization['data'] = json.loads(visualization['data'])
+            return result
         else:
             return dict(status="ERROR", message="Not found"), 404
 
