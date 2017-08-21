@@ -37,8 +37,11 @@ class VisualizationListApi(Resource):
             else:
                 try:
                     visualization = form.data
-                    visualization.type = VisualizationType.query.get(
-                        visualization.type.id)
+                    vis_type = visualization.type.id
+                    visualization.type = VisualizationType.query.get(vis_type)
+                    if visualization.type is None:
+                        raise ValueError(
+                            'Invalid visualization type: {}'.format(vis_type))
                     db.session.add(visualization)
                     db.session.commit()
                     result, result_code = response_schema.dump(
@@ -95,7 +98,8 @@ class VisualizationDetailApi(Resource):
                 # this is the reason for the following key transformation
 
                 row = vis_table.row(
-                    b'{job_id}-{task_id}'.format(job_id=job_id, task_id=task_id))
+                    b'{job_id}-{task_id}'.format(job_id=job_id,
+                                                 task_id=task_id))
                 # Close HBase connection
                 connection.close()
                 if row:
