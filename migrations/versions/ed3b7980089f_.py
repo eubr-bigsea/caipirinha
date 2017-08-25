@@ -29,6 +29,7 @@ def insert_visualization_type():
         (71, 'area-chart', 'Area Chart', 'fa-area-chart'),
         (87, 'plot-chart', 'Plot Chart', 'fa-lemon-o'),
         (88, 'map', 'Map', 'fa-map-marker'),
+        (89, 'donut-chart', 'Donut chart', 'fa-circle-o-notch'),
     ]
     rows = [dict(zip([c.name for c in tb.columns], operation)) for operation in
             all_ops]

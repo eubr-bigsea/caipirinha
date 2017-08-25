@@ -74,6 +74,34 @@ class VisualizationDetailApi(Resource):
             if visualization.data is not None:
                 # New code using MySQL
                 data = json.loads(visualization.data)
+                if visualization.type_id == 35:  # table
+                    result = dict(
+                        job_id=job_id, task_id=task_id,
+                        suggested_width=visualization.suggested_width,
+                        type=dict(id=visualization.type_id,
+                                  icon=visualization.type.icon,
+                                  name=visualization.type.name),
+                        title=visualization.title,
+                        # labels=labels,
+                        # attributes=attributes,
+                        data=data)
+                else:
+                    result = dict(
+                        job_id=job_id, task_id=task_id,
+                        # suggested_width=visualization.suggested_width,
+                        type=dict(id=visualization.type_id,
+                                  icon=visualization.type.icon,
+                                  name=visualization.type.name),
+                        title=visualization.title,
+                        # labels=labels,
+                        # attributes=attributes,
+                        data=data.get('data'),
+                        legend=data.get('legend'),
+                        tooltip=data.get('tooltip'),
+                        colors=data.get('colors'),
+                        x=data.get('x'),
+                        y=data.get('y'),
+                    )
             else:
                 # Legacy code using HBase
                 caipirinha_config = current_app.config['CAIPIRINHA_CONFIG']
@@ -116,21 +144,16 @@ class VisualizationDetailApi(Resource):
                     labels = []
                     attributes = []
 
-            result = dict(
-                job_id=job_id, task_id=task_id,
-                # suggested_width=visualization.suggested_width,
-                type=dict(id=visualization.type_id,
-                          icon=visualization.type.icon,
-                          name=visualization.type.name),
-                title=visualization.title,
-                # labels=labels,
-                # attributes=attributes,
-                data=data if isinstance(data, list) else data.get('data', data),
-                legend=data.get('legend'),
-                tooltip=data.get('tooltip'),
-                x=data.get('x'),
-                y=data.get('y'),
-            )
+                result = dict(
+                    job_id=job_id, task_id=task_id,
+                    suggested_width=visualization.suggested_width,
+                    type=dict(id=visualization.type_id,
+                              icon=visualization.type.icon,
+                              name=visualization.type.name),
+                    title=visualization.title,
+                    labels=labels,
+                    attributes=attributes,
+                    data=data)
         # In case of no visualization found
         else:
             result = dict(status="ERROR", message="Not Found"), 404
