@@ -95,13 +95,8 @@ class VisualizationDetailApi(Resource):
                         title=visualization.title,
                         # labels=labels,
                         # attributes=attributes,
-                        data=data.get('data'),
-                        legend=data.get('legend'),
-                        tooltip=data.get('tooltip'),
-                        colors=data.get('colors'),
-                        x=data.get('x'),
-                        y=data.get('y'),
                     )
+                    result.update(data)
             else:
                 # Legacy code using HBase
                 caipirinha_config = current_app.config['CAIPIRINHA_CONFIG']
