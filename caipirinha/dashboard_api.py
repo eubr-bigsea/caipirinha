@@ -121,8 +121,10 @@ class DashboardDetailApi(Resource):
         dashboard = Dashboard.query.get(dashboard_id)
         if dashboard is not None:
             result = DashboardItemResponseSchema().dump(dashboard).data
+            if result.get('configuration') is not None:
+                result['configuration'] = json.loads(result['configuration'])
             for visualization in result['visualizations']:
-                visualization['data'] = json.loads(visualization['data'])
+                del visualization['data']
             return result
         else:
             return dict(status="ERROR", message="Not found"), 404
@@ -153,11 +155,17 @@ class DashboardDetailApi(Resource):
         result = dict(status="ERROR", message="Insufficient data")
         result_code = 404
 
-        if request.json:
+        if request.data:
+            data = json.loads(request.data)
+            if 'configuration' in data:
+                data['configuration'] = json.dumps(data['configuration'])
+            # Cannot be changed
+            if 'user' in data:
+                del data['user']
             request_schema = partial_schema_factory(
                 DashboardCreateRequestSchema)
             # Ignore missing fields to allow partial updates
-            form = request_schema.load(request.json, partial=True)
+            form = request_schema.load(data, partial=True)
             response_schema = DashboardItemResponseSchema()
             if not form.errors:
                 try:

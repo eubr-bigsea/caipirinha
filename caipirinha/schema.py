@@ -45,10 +45,9 @@ class DashboardListResponseSchema(Schema):
     version = fields.Integer(required=True)
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
-    visualizations = fields.Nested(
-        'caipirinha.schema.VisualizationListResponseSchema',
-        allow_none=True,
-        many=True)
+    configuration = fields.String(required=False, allow_none=True)
+    is_public = fields.Boolean(required=True, missing=True,
+                               default=True)
     user = fields.Function(
         lambda x: {
             "id": x.user_id,
@@ -79,6 +78,9 @@ class DashboardCreateRequestSchema(Schema):
     workflow_name = fields.String(required=False, allow_none=True)
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
+    configuration = fields.String(required=False, allow_none=True)
+    is_public = fields.Boolean(required=True, missing=True,
+                               default=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationCreateRequestSchema',
         allow_none=True,
@@ -108,6 +110,9 @@ class DashboardItemResponseSchema(Schema):
     version = fields.Integer(required=True)
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
+    configuration = fields.String(required=False, allow_none=True)
+    is_public = fields.Boolean(required=True, missing=True,
+                               default=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationItemResponseSchema',
         allow_none=True,
