@@ -162,6 +162,8 @@ class DashboardDetailApi(Resource):
             # Cannot be changed
             if 'user' in data:
                 del data['user']
+            if 'visualizations' in data:
+                del data['visualizations']
             request_schema = partial_schema_factory(
                 DashboardCreateRequestSchema)
             # Ignore missing fields to allow partial updates
