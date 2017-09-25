@@ -25,7 +25,7 @@ def upgrade():
                             default=True,
                             nullable=False))
     op.execute(text(
-        "UPDATE visualization_type SET slug = 'scatter-plot' WHERE id =87"
+        "UPDATE visualization_type SET name = 'scatter-plot' WHERE id =87"
     ))
     # ### end Alembic commands ###
 
@@ -36,6 +36,6 @@ def downgrade():
     op.drop_column('dashboard', 'configuration')
 
     op.execute(text(
-        "UPDATE visualization_type SET slug = 'plot-chart' WHERE id =87"
+        "UPDATE visualization_type SET name = 'plot-chart' WHERE id =87"
     ))
     # ### end Alembic commands ###
