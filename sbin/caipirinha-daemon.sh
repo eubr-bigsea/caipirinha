@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # This script controls the caipirinha server daemon initialization, status reporting
 # and termination
@@ -16,7 +16,7 @@ fi
 cmd_option=$1
 
 # if unset set caipirinha_home to directory root
-export CAIPIRINHA_HOME=${CAIPIRINHA_HOME:-$(cd `dirname $0`/..; pwd)}
+export CAIPIRINHA_HOME=${CAIPIRINHA_HOME:-$(cd $(dirname $0)/..; pwd)}
 echo ${CAIPIRINHA_HOME}
 
 # get log directory
