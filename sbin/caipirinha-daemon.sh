@@ -37,11 +37,17 @@ case $cmd_option in
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} \
       python ${CAIPIRINHA_HOME}/caipirinha/manage.py \
       db upgrade
+    if [ $? -eq 0 ]
+    then
+      echo "DB migration: successful"
+    else
+      echo "Error on DB migration"
+      exit 1
+    fi
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} nohup -- \
       python ${CAIPIRINHA_HOME}/caipirinha/runner/caipirinha_server.py \
       -c ${CAIPIRINHA_HOME}/conf/caipirinha-config.yaml >> $log 2>&1 < /dev/null &
     caipirinha_server_pid=$!
-
     # persist the pid
     echo $caipirinha_server_pid > $pid
     echo "Caipirinha server started, logging to $log (pid=$caipirinha_server_pid)"
@@ -53,6 +59,14 @@ case $cmd_option in
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} \
       python ${CAIPIRINHA_HOME}/caipirinha/manage.py \
       db upgrade
+    # check if the db migration was successful
+    if [ $? -eq 0 ]
+    then
+      echo "DB migration: successful"
+    else
+      echo "Error on DB migration"
+      exit 1
+    fi
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} \
       python ${CAIPIRINHA_HOME}/caipirinha/runner/caipirinha_server.py \
       -c ${CAIPIRINHA_HOME}/conf/caipirinha-config.yaml &
