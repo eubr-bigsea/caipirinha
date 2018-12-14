@@ -2,6 +2,7 @@
 import logging
 import math
 
+from sqlalchemy import or_
 from app_auth import requires_auth
 from flask import request, current_app
 from flask_restful import Resource
@@ -28,7 +29,7 @@ class DashboardListApi(Resource):
 
         dashboards = _get_dashboards(Dashboard.query)
 
-        sort = request.args.get('sort', 'name')
+        sort = request.args.get('sort', 'title')
         if sort not in ['title']:
             sort = 'id'
         sort_option = getattr(Dashboard, sort)
@@ -36,6 +37,12 @@ class DashboardListApi(Resource):
             sort_option = sort_option.desc()
 
         dashboards = dashboards.order_by(sort_option)
+        q_filter = request.args.get('q')
+        if q_filter:
+            find_pattern = '%%{}%%'.format(q_filter.replace(" ", "%"))
+            dashboards = dashboards.filter(or_(
+                Dashboard.title.like(find_pattern),
+                Dashboard.user_name.like(find_pattern)))
 
         page = request.args.get('page') or '1'
 
