@@ -8,14 +8,13 @@ Create Date: 2019-04-16 21:55:10.723443
 from alembic import op
 from sqlalchemy import String, Integer
 from sqlalchemy.sql import table, column, text
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision = '13b676178b08'
 down_revision = 'cfacecb61ac1'
 branch_labels = None
 depends_on = None
+
 
 def insert_visualization_type():
     tb = table(
@@ -27,6 +26,7 @@ def insert_visualization_type():
 
     all_ops = [
         (123, 'box-plot', 'Box plot', 'fa-chart'),
+        (124, 'histogram', 'Histogram', 'fa-chart'),
     ]
     rows = [dict(zip([c.name for c in tb.columns], operation)) for operation in
             all_ops]
@@ -49,7 +49,10 @@ def upgrade():
 def downgrade():
     try:
         op.execute(text('START TRANSACTION'))
-        op.execute(text("DELETE FROM visualization_type WHERE id IN (123)"))
+        op.execute(text('SET FOREIGN_KEY_CHECKS=0;'))
+        op.execute(
+            text("DELETE FROM visualization_type WHERE id IN (123, 124)"))
+        op.execute(text('SET FOREIGN_KEY_CHECKS=1;'))
         op.execute(text('COMMIT'))
     except:
         op.execute(text('ROLLBACK'))

@@ -38,7 +38,7 @@ class Dashboard(db.Model):
     workflow_name = Column(String(200))
     task_id = Column(String(200), nullable=False)
     job_id = Column(Integer, nullable=False)
-    configuration = Column(Text)
+    configuration = Column(String(16000000))
     is_public = Column(Boolean,
                        default=True, nullable=False)
     __mapper_args__ = {
@@ -65,7 +65,7 @@ class Visualization(db.Model):
     job_id = Column(Integer, nullable=False)
     suggested_width = Column(Integer,
                              default=12, nullable=False)
-    data = Column(Text)
+    data = Column(String(16000000))
 
     # Associations
     dashboard_id = Column(Integer,
