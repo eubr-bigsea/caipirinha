@@ -3,10 +3,10 @@ import logging
 import math
 
 from sqlalchemy import or_
-from app_auth import requires_auth
+from caipirinha.app_auth import requires_auth
+from caipirinha.schema import *
 from flask import request, current_app
 from flask_restful import Resource
-from schema import *
 
 log = logging.getLogger(__name__)
 
@@ -96,7 +96,7 @@ class DashboardListApi(Resource):
                 try:
                     dashboard = form.data
                     # fix foreign keys
-                    for i in xrange(len(dashboard.visualizations)):
+                    for i in range(len(dashboard.visualizations)):
                         dashboard.visualizations[i].type = \
                             VisualizationType.query.get(
                                 dashboard.visualizations[i].type.id)
@@ -108,7 +108,7 @@ class DashboardListApi(Resource):
                     db.session.commit()
                     result, result_code = response_schema.dump(
                         dashboard).data, 200
-                except Exception, e:
+                except Exception as e:
                     log.exception('Error in POST')
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
@@ -147,7 +147,7 @@ class DashboardDetailApi(Resource):
                 db.session.delete(dashboard)
                 db.session.commit()
                 result, result_code = dict(status="OK", message="Deleted"), 200
-            except Exception, e:
+            except Exception as e:
                 log.exception('Error in DELETE')
                 result, result_code = dict(status="ERROR",
                                            message="Internal error"), 500
@@ -188,7 +188,7 @@ class DashboardDetailApi(Resource):
                             data=response_schema.dump(dashboard).data), 200
                     else:
                         result = dict(status="ERROR", message="Not found")
-                except Exception, e:
+                except Exception as e:
                     log.exception('Error in PATCH')
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
