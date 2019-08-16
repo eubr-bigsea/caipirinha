@@ -18,7 +18,7 @@ def query_limonero(base_url, item_path, token, item_id):
         return json.loads(r.text)
     else:
         raise RuntimeError(
-            u"Error loading storage id {}: HTTP {} - {}".format(item_id,
+            "Error loading storage id {}: HTTP {} - {}".format(item_id,
                                                                 r.status_code,
                                                                 r.text))
 

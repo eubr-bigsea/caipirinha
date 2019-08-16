@@ -67,8 +67,8 @@ def requires_auth(f):
                     log.warn('Using Authorization and token is incorrect!')
                     return f(*_args, **kwargs)
                 else:
-                    print('Error in authentication ({}, {}, {}): {}'.format(
-                        authorization, user_id, url, r.text))
+                    print(('Error in authentication ({}, {}, {}): {}'.format(
+                        authorization, user_id, url, r.text)))
                     log.error('Error in authentication ({}, {}, {}): {}'.format(
                         authorization, user_id, url, r.text))
                     return authenticate(MSG2, {})

@@ -9,7 +9,7 @@ from caipirinha.models import *
 
 def partial_schema_factory(schema_cls):
     schema = schema_cls(partial=True)
-    for field_name, field in schema.fields.items():
+    for field_name, field in list(schema.fields.items()):
         if isinstance(field, fields.Nested):
             new_field = deepcopy(field)
             new_field.schema.partial = True

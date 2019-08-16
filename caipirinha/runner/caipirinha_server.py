@@ -45,7 +45,7 @@ mappings = {
     '/visualizations/<int:job_id>/<string:task_id>': VisualizationDetailApi,
     '/visualizations': VisualizationListApi,
 }
-for path, view in mappings.iteritems():
+for path, view in list(mappings.items()):
     api.add_resource(view, path)
 
 # @app.before_request

@@ -1,27 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# noinspection PyBroadException
+try:
+    import eventlet
+    eventlet.monkey_patch(all=True)
+except:
+    pass
+
 import logging
 import logging.config
-
-import eventlet
 import eventlet.wsgi
 import os
 import sqlalchemy_utils
 import yaml
 from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
-from caipirinha.models import Dashboard
+from caipirinha.models import Dashboard, db
 from flask import Flask, request
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
-from models import db
-from visualization_api import VisualizationDetailApi, VisualizationListApi
+from caipirinha.visualization_api import VisualizationDetailApi, \
+    VisualizationListApi
 
 sqlalchemy_utils.i18n.get_locale = get_locale
 
-eventlet.monkey_patch(all=True)
 app = Flask(__name__)
 
 babel = Babel(app)
@@ -42,7 +46,7 @@ mappings = {
     '/visualizations/<int:job_id>/<task_id>': VisualizationDetailApi,
     '/visualizations': VisualizationListApi,
 }
-for path, view in mappings.iteritems():
+for path, view in list(mappings.items()):
     api.add_resource(view, path)
 
 
@@ -65,7 +69,7 @@ def main(is_main_module):
     logger = logging.getLogger(__name__)
     if config_file:
         with open(config_file) as f:
-            config = yaml.load(f)['caipirinha']
+            config = yaml.load(f, Loader=yaml.FullLoader)['caipirinha']
 
         app.config["RESTFUL_JSON"] = {"cls": app.json_encoder}
 

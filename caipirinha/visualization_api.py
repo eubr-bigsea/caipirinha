@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-}
 
 import logging
-import urlparse
 
-from app_auth import requires_auth
+from caipirinha.app_auth import requires_auth
+from caipirinha.schema import *
 from caipirinha.service import limonero_service
 from flask import current_app, request
 from flask_restful import Resource
-from schema import *
 
 log = logging.getLogger(__name__)
 
@@ -45,7 +44,7 @@ class VisualizationListApi(Resource):
                     db.session.commit()
                     result, result_code = response_schema.dump(
                         visualization).data, 200
-                except Exception, e:
+                except Exception as e:
                     log.exception('Error in POST')
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
