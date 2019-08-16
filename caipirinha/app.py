@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import eventlet
-eventlet.monkey_patch(all=True)
+# noinspection PyBroadException
+try:
+    import eventlet
+    eventlet.monkey_patch(all=True)
+except:
+    pass
 
 import logging
 import logging.config
@@ -17,7 +21,8 @@ from flask_admin.contrib.sqla import ModelView
 from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
-from caipirinha.visualization_api import VisualizationDetailApi, VisualizationListApi
+from caipirinha.visualization_api import VisualizationDetailApi, \
+    VisualizationListApi
 
 sqlalchemy_utils.i18n.get_locale = get_locale
 
