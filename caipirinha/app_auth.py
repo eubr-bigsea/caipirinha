@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-}
 import json
 import logging
+import re
 from collections import namedtuple
 from functools import wraps
 
-import re
 import requests
 from flask import request, Response, current_app, g as flask_g
 
-User = namedtuple("User", "id, login, email, first_name, last_name, locale")
+User = namedtuple(
+    "User", "id, login, email, name, first_name, last_name, locale, roles")
 
 MSG1 = 'Could not verify your access level for that URL. ' \
        'You have to login with proper credentials provided by Lemonade Thorn'
@@ -37,19 +38,12 @@ def requires_auth(f):
         user_id = request.headers.get('x-user-id')
 
         if authorization and user_id:
-            expr = re.compile(r'Token token="?(.+?)"?, email="?(.+?)(?:"|$)')
-            found = expr.findall(authorization)
-            if not found:
-                return authenticate(MSG2, {})
-            token, email = found[0]
             # It is using Thorn
             url = '{}/api/tokens'.format(config['services']['thorn']['url'])
+            # url = 'http://localhost:3000/api/tokens'
+
             payload = json.dumps({
                 'data': {
-                    'attributes': {
-                        'authenticity-token': token,
-                        'email': email
-                    },
                     'type': 'tokens',
                     'id': user_id
                 }
@@ -75,17 +69,23 @@ def requires_auth(f):
             else:
                 user_data = json.loads(r.text)
                 setattr(flask_g, 'user', User(
-                    id=user_id,
+                    id=int(user_id),
+                    name='{} {}'.format(
+                        user_data['data']['attributes']['first_name'].encode(
+                            'utf8'),
+                        user_data['data']['attributes']['last_name'].encode(
+                            'utf8')),
                     login=user_data['data']['attributes']['email'],
                     email=user_data['data']['attributes']['email'],
-                    first_name=user_data['data']['attributes']['email'],
-                    last_name='',
-                    locale='en'))
+                    first_name=user_data['data']['attributes']['first_name'],
+                    last_name=user_data['data']['attributes']['last_name'],
+                    locale=user_data['data']['attributes']['locale'],
+                    roles=user_data['data']['attributes']['roles']))
                 return f(*_args, **kwargs)
         elif internal_token:
             if internal_token == str(config['secret']):
                 # System user being used
-                setattr(flask_g, 'user', User(1, '', '', '', '', ''))
+                setattr(flask_g, 'user', User(1, '', '', '', '', '', '', ''))
                 return f(*_args, **kwargs)
             else:
                 return authenticate(MSG2, {"message": "Invalid X-Auth-Token"})
