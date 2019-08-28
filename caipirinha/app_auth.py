@@ -85,7 +85,7 @@ def requires_auth(f):
         elif internal_token:
             if internal_token == str(config['secret']):
                 # System user being used
-                setattr(flask_g, 'user', User(1, '', '', '', '', '', '', ''))
+                setattr(flask_g, 'user', User(1, '', '', '', '', '', '', '', 'pt', ['admin']))
                 return f(*_args, **kwargs)
             else:
                 return authenticate(MSG2, {"message": "Invalid X-Auth-Token"})
