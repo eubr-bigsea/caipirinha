@@ -57,7 +57,8 @@ def requires_auth(f):
                                  headers=headers)
             if r.status_code != 200:
                 if internal_token and internal_token == str(config['secret']):
-                    setattr(flask_g, 'user', User(2, '', '', '', '', ''))
+                    setattr(flask_g, 'user', User(2, '', '', '', '', '', 'pt', 
+                        ['admin']))
                     log.warn('Using Authorization and token is incorrect!')
                     return f(*_args, **kwargs)
                 else:
