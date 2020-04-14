@@ -31,17 +31,24 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*_args, **kwargs):
         config = current_app.config[CONFIG_KEY]
-        user_id = request.headers.get('x-user-id')
-        permissions = request.headers.get('x-permissions')
-        user_data = request.headers.get('x-user-data')
-
-        if all([user_data, user_id, permissions]):
-            login, email, name, locale = user_data.split(';')
-            setattr(flask_g, 'user', User(user_id, login, email, name, locale, '', '',
-                permissions.split(',')))
+        if str(config.get('secret', '')) == request.headers.get(
+                'X-Auth-Token'):
+            # Inter services authentication
+            setattr(flask_g, 'user', User(0, 'internal', 
+                'lemonade@lemonade.org.br', 'internal', 'en', '', '', ''))
             return f(*_args, **kwargs)
         else:
-            return authenticate(MSG1, {'message': 'Invalid authentication'})
+            user_id = request.headers.get('x-user-id')
+            permissions = request.headers.get('x-permissions')
+            user_data = request.headers.get('x-user-data')
+
+            if all([user_data, user_id, permissions]):
+                login, email, name, locale = user_data.split(';')
+                setattr(flask_g, 'user', User(user_id, login, email, name, locale, '', '',
+                    permissions.split(',')))
+                return f(*_args, **kwargs)
+            else:
+                return authenticate(MSG1, {'message': 'Invalid authentication'})
 
     return decorated
 
