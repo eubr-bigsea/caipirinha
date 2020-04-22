@@ -5,16 +5,19 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, \
     Enum, DateTime, Numeric, Text, Unicode, UnicodeText
 from sqlalchemy import event
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy_i18n import make_translatable, translation_base, Translatable
 
-make_translatable(options={'locales': ['pt', 'en', 'es'],
+make_translatable(options={'locales': ['pt', 'en'],
                            'auto_create_locales': True,
                            'fallback_locale': 'en'})
 
 db = SQLAlchemy()
+
+# Association tables definition
 
 
 class Dashboard(db.Model):
@@ -38,16 +41,19 @@ class Dashboard(db.Model):
     workflow_name = Column(String(200))
     task_id = Column(String(200), nullable=False)
     job_id = Column(Integer, nullable=False)
-    configuration = Column(String(16000000))
+    configuration = Column(LONGTEXT)
     is_public = Column(Boolean,
-                       default=True, nullable=False)
+                       default=False, nullable=False)
+    hash = Column(String(200))
     __mapper_args__ = {
         'version_id_col': version,
     }
 
     # Associations
+    visualizations = relationship("Visualization", back_populates="dashboard",
+                                  cascade="all, delete-orphan")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def __repr__(self):
@@ -62,10 +68,12 @@ class Visualization(db.Model):
     id = Column(Integer, primary_key=True)
     task_id = Column(String(200), nullable=False)
     title = Column(String(200), nullable=False)
-    job_id = Column(Integer, nullable=False)
+    workflow_id = Column(Integer)
+    job_id = Column(Integer)
+    task_id = Column(Integer)
     suggested_width = Column(Integer,
-                             default=12, nullable=False)
-    data = Column(String(16000000))
+                             default=12)
+    data = Column(LONGTEXT)
 
     # Associations
     dashboard_id = Column(Integer,
@@ -73,15 +81,15 @@ class Visualization(db.Model):
     dashboard = relationship(
         "Dashboard",
         foreign_keys=[dashboard_id],
-        backref=backref("visualizations",
-                        cascade="all, delete-orphan"))
+        back_populates="visualizations"
+    )
     type_id = Column(Integer,
                      ForeignKey("visualization_type.id"), nullable=False)
     type = relationship(
         "VisualizationType",
         foreign_keys=[type_id])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.task_id
 
     def __repr__(self):
@@ -98,7 +106,7 @@ class VisualizationType(db.Model):
     help = Column(String(500), nullable=False)
     icon = Column(String(200))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):

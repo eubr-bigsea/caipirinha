@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-}
 import logging
 import math
+import uuid
 
 from sqlalchemy import or_
 from caipirinha.app_auth import requires_auth
@@ -102,7 +103,6 @@ class DashboardListApi(Resource):
                                 dashboard.visualizations[i].type.id)
                         # dashboard.visualizations[i].type = None
 
-                    # import pdb
                     # pdb.set_trace()
                     db.session.add(dashboard)
                     db.session.commit()
@@ -113,10 +113,28 @@ class DashboardListApi(Resource):
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
                     if current_app.debug:
-                        result['debug_detail'] = e.message
+                        result['debug_detail'] = str(e)
                     db.session.rollback()
 
         return result, result_code
+
+def _get_dashboard(dashboard):
+    if dashboard is not None:
+        result = DashboardItemResponseSchema().dump(dashboard).data
+        if result.get('configuration') is not None:
+            result['configuration'] = json.loads(result['configuration'])
+        for visualization in result.get('visualizations', []):
+            del visualization['data']
+        return result
+    else:
+        return dict(status="ERROR", message="Not found"), 404
+
+
+class PublicDashboardApi(Resource):
+    @staticmethod
+    def get(h):
+        return _get_dashboard(Dashboard.query.filter(
+            Dashboard.hash==h).first())
 
 
 class DashboardDetailApi(Resource):
@@ -125,16 +143,7 @@ class DashboardDetailApi(Resource):
     @staticmethod
     @requires_auth
     def get(dashboard_id):
-        dashboard = Dashboard.query.get(dashboard_id)
-        if dashboard is not None:
-            result = DashboardItemResponseSchema().dump(dashboard).data
-            if result.get('configuration') is not None:
-                result['configuration'] = json.loads(result['configuration'])
-            for visualization in result['visualizations']:
-                del visualization['data']
-            return result
-        else:
-            return dict(status="ERROR", message="Not found"), 404
+        return _get_dashboard(Dashboard.query.get(dashboard_id))
 
     @staticmethod
     @requires_auth
@@ -152,7 +161,7 @@ class DashboardDetailApi(Resource):
                 result, result_code = dict(status="ERROR",
                                            message="Internal error"), 500
                 if current_app.debug:
-                    result['debug_detail'] = e.message
+                    result['debug_detail'] = str(e)
                 db.session.rollback()
         return result, result_code
 
@@ -162,8 +171,8 @@ class DashboardDetailApi(Resource):
         result = dict(status="ERROR", message="Insufficient data")
         result_code = 404
 
-        if request.data:
-            data = json.loads(request.data)
+        if request.json:
+            data = request.json
             if 'configuration' in data:
                 data['configuration'] = json.dumps(data['configuration'])
             # Cannot be changed
@@ -179,6 +188,8 @@ class DashboardDetailApi(Resource):
             if not form.errors:
                 try:
                     form.data.id = dashboard_id
+                    if form.data.is_public and form.data.hash is None:
+                        form.data.hash = uuid.uuid4().hex
                     dashboard = db.session.merge(form.data)
                     db.session.commit()
 
@@ -193,7 +204,7 @@ class DashboardDetailApi(Resource):
                     result, result_code = dict(status="ERROR",
                                                message="Internal error"), 500
                     if current_app.debug:
-                        result['debug_detail'] = e.message
+                        result['debug_detail'] = str(e)
                     db.session.rollback()
             else:
                 result = dict(status="ERROR", message="Invalid data",

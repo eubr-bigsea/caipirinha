@@ -52,7 +52,7 @@ def upgrade():
 def downgrade():
     try:
         op.execute(text('START TRANSACTION'))
-        op.execute(text("DELETE FROM visualization_type WHERE id IN (71, 87, 88)"))
+        op.execute(text("DELETE FROM visualization_type WHERE id IN (71, 87, 88, 89)"))
         op.execute(text('COMMIT'))
     except:
         op.execute(text('ROLLBACK'))

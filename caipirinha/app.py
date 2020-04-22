@@ -13,7 +13,8 @@ import eventlet.wsgi
 import os
 import sqlalchemy_utils
 import yaml
-from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
+from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi, \
+        PublicDashboardApi
 from caipirinha.models import Dashboard, db
 from flask import Flask, request
 from flask_admin import Admin
@@ -22,8 +23,8 @@ from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
 from caipirinha.visualization_api import VisualizationDetailApi, \
-    VisualizationListApi
-
+    VisualizationListApi, PublicVisualizationApi
+from caipirinha.text_api import TextListApi, TextDetailApi
 sqlalchemy_utils.i18n.get_locale = get_locale
 
 app = Flask(__name__)
@@ -42,9 +43,13 @@ api = Api(app)
 
 mappings = {
     '/dashboards': DashboardListApi,
+    '/public/dashboard/<h>': PublicDashboardApi,
     '/dashboards/<int:dashboard_id>': DashboardDetailApi,
-    '/visualizations/<int:job_id>/<task_id>': VisualizationDetailApi,
+    '/visualizations/<int:job_id>/<task_id>/<int:vis_id>': VisualizationDetailApi,
+    '/public/visualization/<int:job_id>/<task_id>/<int:vis_id>': PublicVisualizationApi,
     '/visualizations': VisualizationListApi,
+    '/texts': TextListApi,
+    '/texts/<int:text_id>': TextDetailApi,
 }
 for path, view in list(mappings.items()):
     api.add_resource(view, path)
