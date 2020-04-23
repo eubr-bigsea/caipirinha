@@ -9,7 +9,8 @@ import eventlet.wsgi
 import os
 import sqlalchemy_utils
 import yaml
-from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
+from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi, \
+        PublicDashboardApi
 from caipirinha.visualization_api import VisualizationDetailApi, \
     VisualizationListApi, PublicVisualizationApi
 from caipirinha.text_api import TextListApi, TextDetailApi
