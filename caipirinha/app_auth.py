@@ -42,13 +42,13 @@ def requires_auth(f):
             permissions = request.headers.get('x-permissions')
             user_data = request.headers.get('x-user-data')
 
-            if all([user_data, user_id, permissions]):
+            if all([user_data, user_id]):
                 login, email, name, locale = user_data.split(';')
                 parts = name.split(' ', 1)
                 setattr(flask_g, 'user', 
                         User(user_id, login, email, name, parts[0], 
                             parts[1].strip() if len(parts)> 1 else '', 
-                            locale, permissions.split(',')))
+                            locale, (permissions or '').split(',')))
                 return f(*_args, **kwargs)
             else:
                 return authenticate(MSG1, {'message': 'Invalid authentication'})
