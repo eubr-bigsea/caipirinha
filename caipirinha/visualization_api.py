@@ -101,7 +101,7 @@ class VisualizationDetailApi(Resource):
     @staticmethod
     @requires_auth
     def get(job_id, task_id, vis_id):
-        if job_id == 0 and task_id == '0':
+        if vis_id:
             visualization = Visualization.query.get(vis_id)
         else:
             visualization = Visualization.query.filter(
