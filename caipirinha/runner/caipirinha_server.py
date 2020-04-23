@@ -11,7 +11,8 @@ import sqlalchemy_utils
 import yaml
 from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
 from caipirinha.visualization_api import VisualizationDetailApi, \
-    VisualizationListApi
+    VisualizationListApi, PublicVisualizationApi
+from caipirinha.text_api import TextListApi, TextDetailApi
 from caipirinha.models import Dashboard
 from flask import Flask, request
 from flask_admin import Admin
