@@ -41,9 +41,13 @@ api = Api(app)
 
 mappings = {
     '/dashboards': DashboardListApi,
+    '/public/dashboard/<h>': PublicDashboardApi,
     '/dashboards/<int:dashboard_id>': DashboardDetailApi,
-    '/visualizations/<int:job_id>/<string:task_id>': VisualizationDetailApi,
+    '/visualizations/<int:job_id>/<task_id>/<int:vis_id>': VisualizationDetailApi,
+    '/public/visualization/<int:job_id>/<task_id>/<int:vis_id>': PublicVisualizationApi,
     '/visualizations': VisualizationListApi,
+    '/texts': TextListApi,
+    '/texts/<int:text_id>': TextDetailApi,
 }
 for path, view in list(mappings.items()):
     api.add_resource(view, path)
