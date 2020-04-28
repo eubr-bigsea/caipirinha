@@ -21,8 +21,8 @@ class VisualizationListApi(Resource):
         result, result_code = dict(
             status="ERROR", 
             message=gettext("Missing json in the request body")), 401
-        if request.data is not None:
-            data = json.loads(request.data)
+        if request.json is not None:
+            data = request.json
             request_schema = VisualizationCreateRequestSchema()
             response_schema = VisualizationItemResponseSchema()
 

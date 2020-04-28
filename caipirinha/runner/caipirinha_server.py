@@ -42,17 +42,19 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 api = Api(app)
 
 mappings = {
-    '/dashboards': DashboardListApi,
-    '/public/dashboard/<h>': PublicDashboardApi,
-    '/dashboards/<int:dashboard_id>': DashboardDetailApi,
-    '/visualizations/<int:job_id>/<task_id>/<int:vis_id>': VisualizationDetailApi,
-    '/public/visualization/<int:job_id>/<task_id>/<int:vis_id>': PublicVisualizationApi,
-    '/visualizations': VisualizationListApi,
-    '/texts': TextListApi,
-    '/texts/<int:text_id>': TextDetailApi,
+    '/dashboards': [DashboardListApi, 'dashboardList'],
+    '/public/dashboard/<h>': [PublicDashboardApi, 'publicDashboard'],
+    '/dashboards/<int:dashboard_id>': [DashboardDetailApi, 'dashboardDetail'],
+    '/visualizations/<int:job_id>/<task_id>/<int:vis_id>': [
+        VisualizationDetailApi, 'visualizationDetail'],
+    '/public/visualization/<int:job_id>/<task_id>/<int:vis_id>': [
+        PublicVisualizationApi, 'publicVisualization'],
+    '/visualizations': [VisualizationListApi, 'visualizationList'],
+    '/texts': [TextListApi, 'textList'],
+    '/texts/<int:text_id>': [TextDetailApi, 'textDetail'],
 }
 for path, view in list(mappings.items()):
-    api.add_resource(view, path)
+    api.add_resource(view[0], path, endpoint=view[1])
 
 # @app.before_request
 def before():

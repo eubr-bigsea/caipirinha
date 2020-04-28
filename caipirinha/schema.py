@@ -139,7 +139,6 @@ class VisualizationCreateRequestSchema(Schema):
     title = fields.String(required=True)
     workflow_id = fields.Integer(required=False, allow_none=True)
     job_id = fields.Integer(required=False, allow_none=True)
-    task_id = fields.Integer(required=False, allow_none=True)
     suggested_width = fields.Integer(
         required=False, allow_none=True, missing=12)
     data = fields.String(required=False, allow_none=True)
@@ -164,7 +163,6 @@ class VisualizationListResponseSchema(Schema):
     title = fields.String(required=True)
     workflow_id = fields.Integer(required=False, allow_none=True)
     job_id = fields.Integer(required=False, allow_none=True)
-    task_id = fields.Integer(required=False, allow_none=True)
     suggested_width = fields.Integer(
         required=False, allow_none=True, missing=12)
     data = fields.String(required=False, allow_none=True)
@@ -189,7 +187,6 @@ class VisualizationItemResponseSchema(Schema):
     title = fields.String(required=True)
     workflow_id = fields.Integer(required=False, allow_none=True)
     job_id = fields.Integer(required=False, allow_none=True)
-    task_id = fields.Integer(required=False, allow_none=True)
     suggested_width = fields.Integer(
         required=False, allow_none=True, missing=12)
     data = fields.String(required=False, allow_none=True)

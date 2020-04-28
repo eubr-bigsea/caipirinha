@@ -70,7 +70,6 @@ class Visualization(db.Model):
     title = Column(String(200), nullable=False)
     workflow_id = Column(Integer)
     job_id = Column(Integer)
-    task_id = Column(Integer)
     suggested_width = Column(Integer,
                              default=12)
     data = Column(LONGTEXT)
