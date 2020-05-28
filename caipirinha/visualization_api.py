@@ -172,7 +172,7 @@ class VisualizationDetailApi(Resource):
 class PublicVisualizationApi(Resource):
     @staticmethod
     def get(job_id, task_id, vis_id):
-        if job_id == 0 and task_id == '0':
+        if task_id in ['0', 'undefined']:
             visualization = Visualization.query.get(vis_id)
         else:
             visualization = Visualization.query.filter(
