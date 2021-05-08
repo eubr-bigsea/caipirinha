@@ -8,7 +8,7 @@ Click==7.0
 dnspython==1.16.0
 enum-compat==0.0.2
 enum34==1.1.6
-eventlet==0.24.1
+eventlet==0.31.0
 Flask==1.0.3
 Flask-Admin==1.5.3
 Flask-Babel==0.12.2
