@@ -4,7 +4,6 @@ import logging
 
 from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
-from caipirinha.service import limonero_service
 from flask import current_app, request
 from flask_restful import Resource
 from flask_babel import gettext

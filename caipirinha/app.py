@@ -17,6 +17,7 @@ from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi, \
         PublicDashboardApi
 from caipirinha.models import Dashboard, db
 from flask import Flask, request
+from flask_swagger_ui import get_swaggerui_blueprint
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_babel import get_locale, Babel
@@ -47,7 +48,9 @@ def ping_connection(dbapi_connection, connection_record, connection_proxy):
 
 sqlalchemy_utils.i18n.get_locale = get_locale
 
-app = Flask(__name__)
+app = Flask(__name__,
+     static_url_path='/static',
+     static_folder='static')
 
 babel = Babel(app)
 
@@ -59,6 +62,27 @@ admin = Admin(app, name='Lemonade', template_mode='bootstrap3')
 
 # CORS
 CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Swagger
+swaggerui_blueprint = get_swaggerui_blueprint(
+    '/api/docs',  
+    '/static/swagger.yaml',
+    config={  # Swagger UI config overrides
+        'app_name': "Lemonade Caipirinha"
+    },
+    # oauth_config={  # OAuth config. See https://github.com/swagger-api/swagger-ui#oauth2-configuration .
+    #    'clientId': "your-client-id",
+    #    'clientSecret': "your-client-secret-if-required",
+    #    'realm': "your-realms",
+    #    'appName': "your-app-name",
+    #    'scopeSeparator': " ",
+    #    'additionalQueryStringParams': {'test': "hello"}
+    # }
+)
+
+app.register_blueprint(swaggerui_blueprint)
+
+# API
 api = Api(app)
 
 mappings = {

@@ -5,7 +5,6 @@ import re
 from collections import namedtuple
 from functools import wraps
 
-import requests
 from flask import request, Response, current_app, g as flask_g
 
 User = namedtuple(

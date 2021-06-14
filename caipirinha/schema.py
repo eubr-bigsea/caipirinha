@@ -24,13 +24,7 @@ def load_json(str_value):
         return "Error loading JSON"
 
 
-# region Protected\s*
-
-class UserCreateRequestSchema(Schema):
-    id = fields.Integer(required=True)
-    login = fields.String(required=True)
-    name = fields.String(required=True)
-
+# region Protected
 # endregion
 
 
@@ -38,13 +32,25 @@ class DashboardListResponseSchema(Schema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     title = fields.String(required=True)
-    created = fields.DateTime(required=True, default=datetime.datetime.utcnow)
-    updated = fields.DateTime(required=True, default=datetime.datetime.utcnow)
+    created = fields.DateTime(
+        required=False,
+        allow_none=True,
+        missing=datetime.datetime.utcnow,
+        default=datetime.datetime.utcnow)
+    updated = fields.DateTime(
+        required=False,
+        allow_none=True,
+        missing=datetime.datetime.utcnow,
+        default=datetime.datetime.utcnow)
     version = fields.Integer(required=True)
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
-    configuration = fields.String(required=False, allow_none=True)
-    is_public = fields.Boolean(required=True, default=False)
+    configuration = fields.Function(lambda x: load_json(x.configuration))
+    is_public = fields.Boolean(
+        required=False,
+        allow_none=True,
+        missing=False,
+        default=False)
     hash = fields.String(required=False, allow_none=True)
     user = fields.Function(
         lambda x: {
@@ -77,7 +83,11 @@ class DashboardCreateRequestSchema(Schema):
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
     configuration = fields.String(required=False, allow_none=True)
-    is_public = fields.Boolean(required=True, default=False)
+    is_public = fields.Boolean(
+        required=False,
+        allow_none=True,
+        missing=False,
+        default=False)
     hash = fields.String(required=False, allow_none=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationCreateRequestSchema',
@@ -101,13 +111,25 @@ class DashboardItemResponseSchema(Schema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     title = fields.String(required=True)
-    created = fields.DateTime(required=True, default=datetime.datetime.utcnow)
-    updated = fields.DateTime(required=True, default=datetime.datetime.utcnow)
+    created = fields.DateTime(
+        required=False,
+        allow_none=True,
+        missing=datetime.datetime.utcnow,
+        default=datetime.datetime.utcnow)
+    updated = fields.DateTime(
+        required=False,
+        allow_none=True,
+        missing=datetime.datetime.utcnow,
+        default=datetime.datetime.utcnow)
     version = fields.Integer(required=True)
     task_id = fields.String(required=True)
     job_id = fields.Integer(required=True)
-    configuration = fields.String(required=False, allow_none=True)
-    is_public = fields.Boolean(required=True, default=False)
+    configuration = fields.Function(lambda x: load_json(x.configuration))
+    is_public = fields.Boolean(
+        required=False,
+        allow_none=True,
+        missing=False,
+        default=False)
     hash = fields.String(required=False, allow_none=True)
     visualizations = fields.Nested(
         'caipirinha.schema.VisualizationItemResponseSchema',
@@ -140,7 +162,10 @@ class VisualizationCreateRequestSchema(Schema):
     workflow_id = fields.Integer(required=False, allow_none=True)
     job_id = fields.Integer(required=False, allow_none=True)
     suggested_width = fields.Integer(
-        required=False, allow_none=True, missing=12)
+        required=False,
+        allow_none=True,
+        missing=12,
+        default=12)
     data = fields.String(required=False, allow_none=True)
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeCreateRequestSchema',
@@ -164,7 +189,10 @@ class VisualizationListResponseSchema(Schema):
     workflow_id = fields.Integer(required=False, allow_none=True)
     job_id = fields.Integer(required=False, allow_none=True)
     suggested_width = fields.Integer(
-        required=False, allow_none=True, missing=12)
+        required=False,
+        allow_none=True,
+        missing=12,
+        default=12)
     data = fields.String(required=False, allow_none=True)
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeListResponseSchema',
@@ -188,7 +216,10 @@ class VisualizationItemResponseSchema(Schema):
     workflow_id = fields.Integer(required=False, allow_none=True)
     job_id = fields.Integer(required=False, allow_none=True)
     suggested_width = fields.Integer(
-        required=False, allow_none=True, missing=12)
+        required=False,
+        allow_none=True,
+        missing=12,
+        default=12)
     data = fields.String(required=False, allow_none=True)
     type = fields.Nested(
         'caipirinha.schema.VisualizationTypeItemResponseSchema',

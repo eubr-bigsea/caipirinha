@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import datetime
 import json
 from flask_sqlalchemy import SQLAlchemy
@@ -76,14 +75,17 @@ class Visualization(db.Model):
 
     # Associations
     dashboard_id = Column(Integer,
-                          ForeignKey("dashboard.id"))
+                          ForeignKey("dashboard.id",
+                                     name="fk_dashboard_id"))
     dashboard = relationship(
         "Dashboard",
         foreign_keys=[dashboard_id],
+        # No cascade!!!
         back_populates="visualizations"
     )
     type_id = Column(Integer,
-                     ForeignKey("visualization_type.id"), nullable=False)
+                     ForeignKey("visualization_type.id",
+                                name="fk_visualization_type_id"), nullable=False)
     type = relationship(
         "VisualizationType",
         foreign_keys=[type_id])

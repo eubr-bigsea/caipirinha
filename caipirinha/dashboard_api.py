@@ -53,7 +53,7 @@ class DashboardListApi(Resource):
             pagination = dashboards.paginate(page, page_size, True)
             result = {
                 'data': DashboardListResponseSchema(many=True, only=only).dump(
-                    pagination.items).data,
+                    pagination.items),
                 'pagination': {
                     'page': page, 'size': page_size,
                     'total': pagination.total,
