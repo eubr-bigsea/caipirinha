@@ -11,5 +11,6 @@ marshmallow==3.12.1
 pyaml==20.4.0
 pytest==6.2.4
 PyMySQL==1.0.2
+psycopg2==2.8.6
 SQLAlchemy==1.4.18
 SQLAlchemy-i18n==1.1.0
