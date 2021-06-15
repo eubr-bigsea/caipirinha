@@ -8,6 +8,7 @@ from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
 from flask import request, current_app
 from flask_restful import Resource
+from marshmallow.exceptions import ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ class DashboardListApi(Resource):
         else:
             result = {
                 'data': DashboardListResponseSchema(many=True, only=only).dump(
-                    dashboards).data}
+                    dashboards)}
 
         return result
 
@@ -79,50 +80,55 @@ class DashboardListApi(Resource):
             params = {}
             params.update(data)
 
-            user = params.pop('user')
-            params['user_id'] = user['id']
-            params['user_login'] = user['login']
-            params['user_name'] = user['name']
+            if 'user' in params:
+                user = params.pop('user')
+                params['user_id'] = user['id']
+                params['user_login'] = user['login']
+                params['user_name'] = user['name']
+
             params['workflow_id'] = params.get('workflow', {}).get(
                 'id') or params.get('workflow_id')
             params['workflow_name'] = params.get('workflow', {}).get(
                 'name') or params.get('workflow_name')
 
-            form = request_schema.load(params)
-            if form.errors:
-                result, result_code = dict(
-                    status="ERROR", message="Validation error",
-                    errors=form.errors), 401
-            else:
-                try:
-                    dashboard = form.data
-                    # fix foreign keys
-                    for i in range(len(dashboard.visualizations)):
-                        dashboard.visualizations[i].type = \
-                            VisualizationType.query.get(
-                                dashboard.visualizations[i].type.id)
-                        # dashboard.visualizations[i].type = None
+            try:
+                dashboard = request_schema.load(params)
+                # fix foreign keys
+                for i in range(len(dashboard.visualizations)):
+                    dashboard.visualizations[i].type = \
+                        VisualizationType.query.get(
+                            dashboard.visualizations[i].type.id)
+                    # dashboard.visualizations[i].type = None
 
-                    # pdb.set_trace()
-                    db.session.add(dashboard)
-                    db.session.commit()
-                    result, result_code = response_schema.dump(
-                        dashboard).data, 200
-                except Exception as e:
-                    log.exception('Error in POST')
-                    result, result_code = dict(status="ERROR",
-                                               message="Internal error"), 500
-                    if current_app.debug:
-                        result['debug_detail'] = str(e)
-                    db.session.rollback()
+                # pdb.set_trace()
+                db.session.add(dashboard)
+                db.session.commit()
+                result, result_code = response_schema.dump(
+                    dashboard), 200
+            except ValidationError as e:
+                result= {
+                   'status': 'ERROR', 
+                   'message': gettext('Validation error'),
+                   'errors': e.messages
+                }
+            except Exception as e:
+                log.exception('Error in POST')
+                result, result_code = dict(status="ERROR",
+                                           message="Internal error"), 500
+                if current_app.debug:
+                    result['debug_detail'] = str(e)
+                db.session.rollback()
 
         return result, result_code
 
 def _get_dashboard(dashboard):
     if dashboard is not None:
-        result = DashboardItemResponseSchema().dump(dashboard).data
+        result = DashboardItemResponseSchema().dump(dashboard)
         if result.get('configuration') is not None:
-            result['configuration'] = json.loads(result['configuration'])
+            try:
+                result['configuration'] = json.loads(result['configuration'])
+            except:
+                ...
         for visualization in result.get('visualizations', []):
             del visualization['data']
         return result
@@ -182,31 +188,33 @@ class DashboardDetailApi(Resource):
                 del data['visualizations']
             request_schema = partial_schema_factory(
                 DashboardCreateRequestSchema)
-            # Ignore missing fields to allow partial updates
-            form = request_schema.load(data, partial=True)
             response_schema = DashboardItemResponseSchema()
-            if not form.errors:
-                try:
-                    form.data.id = dashboard_id
-                    if form.data.is_public and form.data.hash is None:
-                        form.data.hash = uuid.uuid4().hex
-                    dashboard = db.session.merge(form.data)
-                    db.session.commit()
+            try:
+            # Ignore missing fields to allow partial updates
+                dashboard = request_schema.load(data, partial=True)
+                dashboard.id = dashboard_id
+                if dashboard.is_public and dashboard.hash is None:
+                    dashboard.hash = uuid.uuid4().hex
+                dashboard = db.session.merge(dashboard)
+                db.session.commit()
 
-                    if dashboard is not None:
-                        result, result_code = dict(
-                            status="OK", message="Updated",
-                            data=response_schema.dump(dashboard).data), 200
-                    else:
-                        result = dict(status="ERROR", message="Not found")
-                except Exception as e:
-                    log.exception('Error in PATCH')
-                    result, result_code = dict(status="ERROR",
-                                               message="Internal error"), 500
-                    if current_app.debug:
-                        result['debug_detail'] = str(e)
-                    db.session.rollback()
-            else:
-                result = dict(status="ERROR", message="Invalid data",
-                              errors=form.errors)
+                if dashboard is not None:
+                    result, result_code = dict(
+                        status="OK", message="Updated",
+                        data=response_schema.dump(dashboard)), 200
+                else:
+                    result = dict(status="ERROR", message="Not found")
+            except ValidationError as e:
+                result= {
+                   'status': 'ERROR', 
+                   'message': gettext('Validation error'),
+                   'errors': e.messages
+                }
+            except Exception as e:
+                log.exception('Error in PATCH')
+                result, result_code = dict(status="ERROR",
+                                           message="Internal error"), 500
+                if current_app.debug:
+                    result['debug_detail'] = str(e)
+                db.session.rollback()
         return result, result_code

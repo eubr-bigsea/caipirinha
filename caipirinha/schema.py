@@ -2,7 +2,7 @@
 import datetime
 import json
 from copy import deepcopy
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, post_dump
 from marshmallow.validate import OneOf
 from caipirinha.models import *
 
@@ -21,14 +21,27 @@ def load_json(str_value):
     try:
         return json.loads(str_value)
     except BaseException:
-        return "Error loading JSON"
+        return None
 
 
 # region Protected
+class UserCreateRequestSchema(Schema):
+    id = fields.Integer(required=True)
+    login = fields.String(required=True)
+    name = fields.String(required=True)
+
 # endregion
 
+class BaseSchema(Schema):
+    @post_dump
+    def remove_skip_values(self, data, **kwargs):
+        return {
+            key: value for key, value in data.items()
+            if value is not None and value != []
+        }
 
-class DashboardListResponseSchema(Schema):
+
+class DashboardListResponseSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     title = fields.String(required=True)
@@ -64,7 +77,7 @@ class DashboardListResponseSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of Dashboard"""
         return Dashboard(**data)
 
@@ -72,7 +85,7 @@ class DashboardListResponseSchema(Schema):
         ordered = True
 
 
-class DashboardCreateRequestSchema(Schema):
+class DashboardCreateRequestSchema(BaseSchema):
     """ JSON serialization schema """
     title = fields.String(required=True)
     user_id = fields.Integer(required=True)
@@ -99,7 +112,7 @@ class DashboardCreateRequestSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of Dashboard"""
         return Dashboard(**data)
 
@@ -107,7 +120,7 @@ class DashboardCreateRequestSchema(Schema):
         ordered = True
 
 
-class DashboardItemResponseSchema(Schema):
+class DashboardItemResponseSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     title = fields.String(required=True)
@@ -147,7 +160,7 @@ class DashboardItemResponseSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of Dashboard"""
         return Dashboard(**data)
 
@@ -155,7 +168,7 @@ class DashboardItemResponseSchema(Schema):
         ordered = True
 
 
-class VisualizationCreateRequestSchema(Schema):
+class VisualizationCreateRequestSchema(BaseSchema):
     """ JSON serialization schema """
     task_id = fields.String(required=True)
     title = fields.String(required=True)
@@ -173,7 +186,7 @@ class VisualizationCreateRequestSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of Visualization"""
         return Visualization(**data)
 
@@ -181,7 +194,7 @@ class VisualizationCreateRequestSchema(Schema):
         ordered = True
 
 
-class VisualizationListResponseSchema(Schema):
+class VisualizationListResponseSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     task_id = fields.String(required=True)
@@ -200,7 +213,7 @@ class VisualizationListResponseSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of Visualization"""
         return Visualization(**data)
 
@@ -208,7 +221,7 @@ class VisualizationListResponseSchema(Schema):
         ordered = True
 
 
-class VisualizationItemResponseSchema(Schema):
+class VisualizationItemResponseSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     task_id = fields.String(required=True)
@@ -227,7 +240,7 @@ class VisualizationItemResponseSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of Visualization"""
         return Visualization(**data)
 
@@ -235,14 +248,14 @@ class VisualizationItemResponseSchema(Schema):
         ordered = True
 
 
-class VisualizationTypeCreateRequestSchema(Schema):
+class VisualizationTypeCreateRequestSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     icon = fields.String(required=False, allow_none=True)
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of VisualizationType"""
         return VisualizationType(**data)
 
@@ -250,7 +263,7 @@ class VisualizationTypeCreateRequestSchema(Schema):
         ordered = True
 
 
-class VisualizationTypeItemResponseSchema(Schema):
+class VisualizationTypeItemResponseSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     name = fields.String(required=True)
@@ -259,7 +272,7 @@ class VisualizationTypeItemResponseSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of VisualizationType"""
         return VisualizationType(**data)
 
@@ -267,7 +280,7 @@ class VisualizationTypeItemResponseSchema(Schema):
         ordered = True
 
 
-class VisualizationTypeListResponseSchema(Schema):
+class VisualizationTypeListResponseSchema(BaseSchema):
     """ JSON serialization schema """
     id = fields.Integer(required=True)
     name = fields.String(required=True)
@@ -276,7 +289,7 @@ class VisualizationTypeListResponseSchema(Schema):
 
     # noinspection PyUnresolvedReferences
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         """ Deserialize data into an instance of VisualizationType"""
         return VisualizationType(**data)
 

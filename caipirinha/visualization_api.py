@@ -7,6 +7,7 @@ from caipirinha.schema import *
 from flask import current_app, request
 from flask_restful import Resource
 from flask_babel import gettext
+from marshmallow.exceptions import ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -28,31 +29,31 @@ class VisualizationListApi(Resource):
             params = {}
             params.update(data)
 
-            form = request_schema.load(params)
-            if form.errors:
+            try:
+                visualization = request_schema.load(params)
+                vis_type = visualization.type.id
+                visualization.type = VisualizationType.query.get(vis_type)
+                if visualization.type is None:
+                    raise ValueError(
+                        gettext('Invalid visualization type: {}').format(vis_type))
+                db.session.add(visualization)
+                db.session.commit()
+                result, result_code = response_schema.dump(
+                    visualization), 200
+            except ValidationError as e:
+                result= {
+                   'status': 'ERROR', 
+                   'message': gettext('Validation error'),
+                   'errors': e.messages
+                }
+            except Exception as e:
+                log.exception('Error in POST')
                 result, result_code = dict(
-                    status="ERROR", message=gettext("Validation error"),
-                    errors=form.errors), 401
-            else:
-                try:
-                    visualization = form.data
-                    vis_type = visualization.type.id
-                    visualization.type = VisualizationType.query.get(vis_type)
-                    if visualization.type is None:
-                        raise ValueError(
-                            gettext('Invalid visualization type: {}').format(vis_type))
-                    db.session.add(visualization)
-                    db.session.commit()
-                    result, result_code = response_schema.dump(
-                        visualization).data, 200
-                except Exception as e:
-                    log.exception('Error in POST')
-                    result, result_code = dict(
-                            status="ERROR",
-                            message=gettext("Internal error")), 500
-                    if current_app.debug:
-                        result['debug_detail'] = e.message
-                    db.session.rollback()
+                        status="ERROR",
+                        message=gettext("Internal error")), 500
+                if current_app.debug:
+                    result['debug_detail'] = e.message
+                db.session.rollback()
 
         return result, result_code
 
@@ -139,33 +140,34 @@ class VisualizationDetailApi(Resource):
             request_schema = partial_schema_factory(
                 VisualizationCreateRequestSchema)
             # Ignore missing fields to allow partial updates
-            form = request_schema.load(data, partial=True)
             response_schema = VisualizationItemResponseSchema()
-            if not form.errors:
-                try:
-                    form.data.id = vis_id
-                    visualization= db.session.merge(form.data)
-                    db.session.commit()
+            try:
+                visualization = request_schema.load(data, partial=True)
+                visualization.id = vis_id
+                visualization= db.session.merge(visualization)
+                db.session.commit()
 
-                    if visualization is not None:
-                        result, result_code = dict(
-                            status="OK", message=gettext("Updated"),
-                            data=response_schema.dump(visualization).data), 200
-                    else:
-                        result = dict(status="ERROR", 
-                                message=gettext("Not found"))
-                except Exception as e:
-                    log.exception('Error in PATCH')
+                if visualization is not None:
                     result, result_code = dict(
-                            status="ERROR",
-                            message=gettext("Internal error")), 500
-                    if current_app.debug:
-                        result['debug_detail'] = str(e)
-                    db.session.rollback()
-            else:
-                result = dict(status="ERROR", 
-                        message=gettext("Invalid data"),
-                        errors=form.errors)
+                        status="OK", message=gettext("Updated"),
+                        data=response_schema.dump(visualization)), 200
+                else:
+                    result = dict(status="ERROR", 
+                            message=gettext("Not found"))
+            except ValidationError as e:
+                result= {
+                   'status': 'ERROR', 
+                   'message': gettext('Validation error'),
+                   'errors': e.messages
+                }
+            except Exception as e:
+                log.exception('Error in PATCH')
+                result, result_code = dict(
+                        status="ERROR",
+                        message=gettext("Internal error")), 500
+                if current_app.debug:
+                    result['debug_detail'] = str(e)
+                db.session.rollback()
         return result, result_code
 
 class PublicVisualizationApi(Resource):
