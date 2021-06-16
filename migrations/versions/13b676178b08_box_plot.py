@@ -8,6 +8,7 @@ Create Date: 2019-04-16 21:55:10.723443
 from alembic import op
 from sqlalchemy import String, Integer
 from sqlalchemy.sql import table, column, text
+from caipirinha.migration_utils import get_enable_disable_fk_command
 
 # revision identifiers, used by Alembic.
 revision = '13b676178b08'
@@ -49,10 +50,10 @@ def upgrade():
 def downgrade():
     try:
         op.execute(text('START TRANSACTION'))
-        op.execute(text('SET FOREIGN_KEY_CHECKS=0;'))
+        op.execute(text(get_enable_disable_fk_command(False)))
         op.execute(
             text("DELETE FROM visualization_type WHERE id IN (123, 124)"))
-        op.execute(text('SET FOREIGN_KEY_CHECKS=1;'))
+        op.execute(text(get_enable_disable_fk_command(True)))
         op.execute(text('COMMIT'))
     except:
         op.execute(text('ROLLBACK'))
