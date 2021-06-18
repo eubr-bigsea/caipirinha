@@ -45,7 +45,7 @@ def upgrade():
     sa.Column('task_id', sa.String(length=200), nullable=False),
     sa.Column('job_id', sa.Integer(), nullable=False),
     sa.Column('suggested_width', sa.Integer(), nullable=False),
-    sa.Column('dashboard_id', sa.Integer(), nullable=False),
+    sa.Column('dashboard_id', sa.Integer(), nullable=True),
     sa.Column('type_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['dashboard_id'], ['dashboard.id'], ),
     sa.ForeignKeyConstraint(['type_id'], ['visualization_type.id'], ),

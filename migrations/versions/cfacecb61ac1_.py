@@ -30,6 +30,7 @@ def upgrade():
     op.add_column('dashboard',
                   sa.Column('is_public', sa.Boolean(),
                             default=True,
+                            server_default='0',
                             nullable=True))
     op.execute(text(
         "UPDATE visualization_type SET name = 'scatter-plot' WHERE id =87"

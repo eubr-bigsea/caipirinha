@@ -1,7 +1,7 @@
 """empty message
 
 Revision ID: a7d4e728b549
-Revises: 63df7f61d072
+Revises: d5ce40ba77de
 Create Date: 2017-08-09 12:31:42.628620
 
 """
@@ -12,7 +12,7 @@ from alembic import op
 from sqlalchemy.dialects import mysql
 
 revision = 'a7d4e728b549'
-down_revision = '63df7f61d072'
+down_revision = 'd5ce40ba77de'
 branch_labels = None
 depends_on = None
 
