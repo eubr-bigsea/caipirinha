@@ -12,6 +12,8 @@ def get_enable_disable_fk_command(enable: bool):
         value = 'IMMEDIATE' if enable else 'DEFERRED'
         return f'SET CONSTRAINTS ALL {value};'
 
+def is_sqlite():
+    return get_engine_name() == 'sqlite'
 
 def is_mysql():
     return get_engine_name() == 'mysql'
