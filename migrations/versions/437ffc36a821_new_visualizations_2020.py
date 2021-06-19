@@ -58,6 +58,8 @@ def downgrade():
         op.execute(text('BEGIN'))
         op.execute(text(get_enable_disable_fk_command(False)))
         op.execute(
+            text("DELETE FROM visualization WHERE type_id IN (123, 124)"))
+        op.execute(
             text("DELETE FROM visualization_type WHERE id IN (123, 124)"))
         op.execute(text(get_enable_disable_fk_command(True)))
         op.execute(text('COMMIT'))

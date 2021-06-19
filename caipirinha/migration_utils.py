@@ -5,12 +5,15 @@ def get_engine_name():
     return op.get_bind().engine.name
 
 def get_enable_disable_fk_command(enable: bool):
-    if op.get_bind().engine.name == 'mysql':
+    if is_mysql():
         value = 1 if enable else 0
         return f'SET foreign_key_checks = {value};'
-    else:
+    elif is_psql():
         value = 'IMMEDIATE' if enable else 'DEFERRED'
         return f'SET CONSTRAINTS ALL {value};'
+    elif is_sqlite():
+        value = 'ON' if enable else 'OFF'
+        return f'PRAGMA foreign_keys = {value}';
 
 def is_sqlite():
     return get_engine_name() == 'sqlite'

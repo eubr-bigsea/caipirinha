@@ -56,7 +56,9 @@ def upgrade():
 def downgrade():
     try:
         op.execute(text('BEGIN'))
-        op.execute(text("DELETE FROM visualization_type"))
+        ids = '1, 19, 35, 68, 69, 70, 80, 81'
+        op.execute(text(f"DELETE FROM visualization where type_id in ({ids})"))
+        op.execute(text(f"DELETE FROM visualization_type where id in ({ids})"))
         op.execute(text('COMMIT'))
     except:
         op.execute(text('ROLLBACK'))

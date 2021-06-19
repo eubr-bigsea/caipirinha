@@ -9,6 +9,7 @@ from caipirinha.schema import *
 from flask import request, current_app
 from flask_restful import Resource
 from marshmallow.exceptions import ValidationError
+from gettext import gettext
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ class DashboardListApi(Resource):
         dashboards = dashboards.order_by(sort_option)
         q_filter = request.args.get('q')
         if q_filter:
-            find_pattern = '%%{}%%'.format(q_filter.replace(" ", "%"))
+            find_pattern = f'%%{q_filter.replace(" ", "%")}%%'
             dashboards = dashboards.filter(or_(
                 Dashboard.title.like(find_pattern),
                 Dashboard.user_name.like(find_pattern)))
@@ -71,7 +72,7 @@ class DashboardListApi(Resource):
     @requires_auth
     def post():
         result, result_code = dict(
-            status="ERROR", message="Missing json in the request body"), 401
+            status="ERROR", message="Missing json in the request body"), 400
         if request.data is not None:
             data = json.loads(request.data)
             request_schema = DashboardCreateRequestSchema()
@@ -94,11 +95,9 @@ class DashboardListApi(Resource):
             try:
                 dashboard = request_schema.load(params)
                 # fix foreign keys
-                for i in range(len(dashboard.visualizations)):
-                    dashboard.visualizations[i].type = \
-                        VisualizationType.query.get(
-                            dashboard.visualizations[i].type.id)
-                    # dashboard.visualizations[i].type = None
+                for visualization in dashboard.visualizations:
+                    visualization.type = VisualizationType.query.get(
+                        visualization.type.id)
 
                 # pdb.set_trace()
                 db.session.add(dashboard)
@@ -121,9 +120,9 @@ class DashboardListApi(Resource):
 
         return result, result_code
 
-def _get_dashboard(dashboard):
-    if dashboard is not None:
-        result = DashboardItemResponseSchema().dump(dashboard)
+def _get_dashboard(dashboard_id):
+    if dashboard_id is not None:
+        result = DashboardItemResponseSchema().dump(dashboard_id)
         if result.get('configuration') is not None:
             try:
                 result['configuration'] = json.loads(result['configuration'])
@@ -161,7 +160,7 @@ class DashboardDetailApi(Resource):
             try:
                 db.session.delete(dashboard)
                 db.session.commit()
-                result, result_code = dict(status="OK", message="Deleted"), 200
+                result, result_code = dict(status="OK", message="Deleted"), 201
             except Exception as e:
                 log.exception('Error in DELETE')
                 result, result_code = dict(status="ERROR",
@@ -175,7 +174,7 @@ class DashboardDetailApi(Resource):
     @requires_auth
     def patch(dashboard_id):
         result = dict(status="ERROR", message="Insufficient data")
-        result_code = 404
+        result_code = 400
 
         if request.json:
             data = request.json

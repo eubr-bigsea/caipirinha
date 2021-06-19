@@ -93,6 +93,7 @@ def _get_visualization(visualization, job_id, task_id):
     else:
         result = dict(status="ERROR", 
                 message=gettext("Not Found")), 404
+
     return result
 
 class VisualizationDetailApi(Resource):

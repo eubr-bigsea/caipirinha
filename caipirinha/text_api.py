@@ -6,9 +6,11 @@ from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
 from flask import current_app, request
 from flask_restful import Resource
+from .visualization_api import _get_visualization
 
 log = logging.getLogger(__name__)
-MARKDOWN_ID=72
+MARKDOWN_ID = 72
+
 
 class TextListApi(Resource):
     """ REST API for Text"""
@@ -37,8 +39,9 @@ class TextListApi(Resource):
                 try:
                     visualization = form.data
                     visualization.title = '' if visualization.title is None \
-                            else visualization.title
-                    visualization.type = VisualizationType.query.get(MARKDOWN_ID)
+                        else visualization.title
+                    visualization.type = VisualizationType.query.get(
+                        MARKDOWN_ID)
                     visualization.dashboard = Dashboard.query.get(dashboard_id)
 
                     db.session.add(visualization)
@@ -55,6 +58,7 @@ class TextListApi(Resource):
 
         return result, result_code
 
+
 class TextDetailApi(Resource):
     """ REST API for a single instance of class Text """
 
@@ -66,5 +70,3 @@ class TextDetailApi(Resource):
             Text.job_id == int(job_id),
             Text.task_id == str(task_id)).first()
         return _get_visualization(visualization, job_id, task_id)
-
-

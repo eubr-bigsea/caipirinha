@@ -13,8 +13,11 @@ import eventlet.wsgi
 import os
 import sqlalchemy_utils
 import yaml
-from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi, \
-        PublicDashboardApi
+from flask import json
+from werkzeug.exceptions import HTTPException
+
+from caipirinha.dashboard_api import (DashboardDetailApi, DashboardListApi, 
+        PublicDashboardApi)
 from caipirinha.models import Dashboard, db
 from flask import Flask, request
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -44,6 +47,21 @@ def ping_connection(dbapi_connection, connection_record, connection_proxy):
         # connecting again up to three times before raising.
         raise exc.DisconnectionError()
     cursor.close()
+
+
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "status": "ERROR",
+        "code": e.code,
+        "name": e.name,
+        "message": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 def create_app():
 
@@ -79,6 +97,9 @@ def create_app():
     
     app.register_blueprint(swaggerui_blueprint)
     
+    # Error handling
+    app.register_error_handler(404, handle_exception)
+
     # API
     api = Api(app)
     
