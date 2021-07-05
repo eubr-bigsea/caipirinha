@@ -1,4 +1,4 @@
-from .fixtures import *
+from .conftest import *
 from flask import current_app
 
 
