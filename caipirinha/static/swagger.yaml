@@ -30,19 +30,20 @@ securityDefinitions:
     name: X-Auth-Token
     in: header
 paths:
-  /dashboards/{id}:
-    get:
+  dashboards/{id}:
+        
+    get: 
       summary: 'Retrieves an instance of Dashboard'
       description: |
         Retrieves an instance of Dashboard by using its identifier.
       tags:
-        - /dashboards
+        - /dashboards/{id}
       parameters:
         - name: id
           in: path
           description: ID of Dashboard to fetch
           required: true
-          type: integer
+          type: integer  
       security:
         - Bearer: []
       responses:
@@ -64,9 +65,9 @@ paths:
           in: path
           description: ID of Dashboard to delete
           required: true
-          type: integer
+          type: integer  
       tags:
-        - /dashboards
+        - /dashboards/{id}
       responses:
         204:
           description: Instance was removed with success.
@@ -81,7 +82,7 @@ paths:
           in: path
           description: ID of Dashboard to delete
           required: true
-          type: integer
+          type: integer  
         - name: dashboard
           in: body
           description: Update
@@ -89,7 +90,7 @@ paths:
           schema:
             $ref: '#/definitions/DashboardCreateRequestSchema'
       tags:
-        - /dashboards
+        - /dashboards/{id}
       responses:
         200:
           description: An array of Dashboard with a single instance.
@@ -101,7 +102,7 @@ paths:
     get:
       summary: 'Retrieves the list of Dashboard'
       description: |
-        The /dashboard endpoint returns informationabout the *Dashboard*. The response includes the display nameand other details about each instance, listing them in the proper display order.
+        A The /dashboard endpoint returns informationabout the *Dashboard*. The response includes the display nameand other details about each instance, listing them in the proper display order.
       security:
         - Bearer: []
       parameters:
@@ -158,19 +159,30 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/DefaultErrorSchema'
-  /visualizations/{id}:
-    get:
+  /visualizations/{job_id}/{task_id}/{id}:
+        
+    get: 
       summary: 'Retrieves an instance of Visualization'
       description: |
         Retrieves an instance of Visualization by using its identifier.
       tags:
-        - /visualizations
+        - /visualizations/{job_id}/{task_id}/{id}
       parameters:
         - name: id
           in: path
           description: ID of Visualization to fetch
           required: true
           type: integer
+        - name: job_id
+          in: path
+          description: Job id
+          required: True
+          type: integer
+        - name: task_id
+          in: path
+          description: Task id
+          required: True
+          type: string  
       security:
         - Bearer: []
       responses:
@@ -181,6 +193,100 @@ paths:
             items:
               $ref: '#/definitions/VisualizationItemResponseSchema'        
   
+    delete:
+      summary: 'Removes an instance of Visualization'
+      description: |
+        Removes Visualization identified by {id}.
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of Visualization to delete
+          required: true
+          type: integer
+        - name: job_id
+          in: path
+          description: Job id
+          required: True
+          type: integer
+        - name: task_id
+          in: path
+          description: Task id
+          required: True
+          type: string  
+      tags:
+        - /visualizations/{job_id}/{task_id}/{id}
+      responses:
+        204:
+          description: Instance was removed with success.
+    patch:
+      summary: 'Updates an instance of Visualization'
+      description: |
+        Updates Visualization identified by {id}.
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of Visualization to delete
+          required: true
+          type: integer
+        - name: job_id
+          in: path
+          description: Job id
+          required: True
+          type: integer
+        - name: task_id
+          in: path
+          description: Task id
+          required: True
+          type: string  
+        - name: visualization
+          in: body
+          description: Update
+          required: true
+          schema:
+            $ref: '#/definitions/VisualizationCreateRequestSchema'
+      tags:
+        - /visualizations/{job_id}/{task_id}/{id}
+      responses:
+        200:
+          description: An array of Visualization with a single instance.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VisualizationItemResponseSchema'
+  /visualizations:
+    post:
+      summary: 'Creates a new instance of Visualization'
+      description: |
+        Creates a new instance of Visualization
+      security:
+        - Bearer: []
+      parameters:
+        - name: visualization
+          in: body
+          description: New item to add to the collection
+          required: true
+          schema:
+            $ref: '#/definitions/VisualizationCreateRequestSchema'
+      tags:
+        - /visualizations
+      responses:
+        200:
+          description: Successfuly created the instance
+          schema:
+            $ref: '#/definitions/VisualizationListResponseSchema'
+        401:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationErrorSchema'
+
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/DefaultErrorSchema'
 definitions:
   DefaultErrorSchema:
     type: object

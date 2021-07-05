@@ -52,7 +52,7 @@ class VisualizationListApi(Resource):
                         status="ERROR",
                         message=gettext("Internal error")), 500
                 if current_app.debug:
-                    result['debug_detail'] = e.message
+                    result['debug_detail'] = str(e)
                 db.session.rollback()
 
         return result, result_code
