@@ -1,5 +1,5 @@
 # caipirinha
-Visualization metadata information for [Lemonade Project](../lemonade)
+Visualization metadata information for [Lemonade Project](https://github.com/eubr-bigsea/lemonade)
 
 ### Install
 ```
