@@ -117,7 +117,6 @@ def test_post_dashboard_missing_data(client):
     # Missing data
     data = {
         'title': 'Updated dashboard',
-        'is_public': True
     }
     rv = client.post('/dashboards', headers=headers, json=data)
     assert rv.status_code == 400
