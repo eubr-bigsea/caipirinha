@@ -14,28 +14,27 @@ import os
 import sqlalchemy_utils
 import yaml
 from flask import json
-from werkzeug.exceptions import HTTPException
 
-from caipirinha.dashboard_api import (DashboardDetailApi, DashboardListApi, 
-        PublicDashboardApi)
-from caipirinha.models import Dashboard, db
+from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
+from caipirinha.public_dashboard_api import PublicDashboardApi
+from caipirinha.models import db
 from flask import Flask, request
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
 from flask_migrate import Migrate
-from caipirinha.visualization_api import VisualizationDetailApi, \
-    VisualizationListApi, PublicVisualizationApi
+from caipirinha.visualization_api import (VisualizationDetailApi,
+    VisualizationListApi, PublicVisualizationApi)
 from caipirinha.text_api import TextListApi, TextDetailApi
 
 from sqlalchemy import exc
 from sqlalchemy import event
 from sqlalchemy.pool import Pool
 
-@event.listens_for(Pool, "checkout")
+@ event.listens_for(Pool, "checkout")
 def ping_connection(dbapi_connection, connection_record, connection_proxy):
-    cursor = dbapi_connection.cursor()
+    cursor=dbapi_connection.cursor()
     try:
         cursor.execute("SELECT 1")
     except:
@@ -52,34 +51,34 @@ def ping_connection(dbapi_connection, connection_record, connection_proxy):
 def handle_exception(e):
     """Return JSON instead of HTML for HTTP errors."""
     # start with the correct headers and status code from the error
-    response = e.get_response()
+    response=e.get_response()
     # replace the body with JSON
-    response.data = json.dumps({
+    response.data=json.dumps({
         "status": "ERROR",
         "code": e.code,
         "name": e.name,
         "message": e.description,
     })
-    response.content_type = "application/json"
+    response.content_type="application/json"
     return response
 
 def create_app():
 
-    app = Flask(__name__,
-         static_url_path='/static',
-         static_folder='static')
-    
-    babel = Babel(app)
-    
+    app=Flask(__name__,
+         static_url_path = '/static',
+         static_folder = 'static')
+
+    babel=Babel(app)
+
     logging.config.fileConfig('logging_config.ini')
-    
-    app.secret_key = 'l3m0n4d1'
-    
+
+    app.secret_key='l3m0n4d1'
+
     # CORS
-    CORS(app, resources={r"/*": {"origins": "*"}})
-    
+    CORS(app, resources = {r"/*": {"origins": "*"}})
+
     # Swagger
-    swaggerui_blueprint = get_swaggerui_blueprint(
+    swaggerui_blueprint=get_swaggerui_blueprint(
         '/api/docs',  
         '/static/swagger.yaml',
         config={  # Swagger UI config overrides

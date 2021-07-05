@@ -120,7 +120,7 @@ class DashboardListApi(Resource):
 
         return result, result_code
 
-def _get_dashboard(dashboard_id):
+def get_dashboard(dashboard_id):
     if dashboard_id is not None:
         result = DashboardItemResponseSchema().dump(dashboard_id)
         if result.get('configuration') is not None:
@@ -138,7 +138,7 @@ def _get_dashboard(dashboard_id):
 class PublicDashboardApi(Resource):
     @staticmethod
     def get(h):
-        return _get_dashboard(Dashboard.query.filter(
+        return get_dashboard(Dashboard.query.filter(
             Dashboard.hash==h).first())
 
 
@@ -148,7 +148,7 @@ class DashboardDetailApi(Resource):
     @staticmethod
     @requires_auth
     def get(dashboard_id):
-        return _get_dashboard(Dashboard.query.get(dashboard_id))
+        return get_dashboard(Dashboard.query.get(dashboard_id))
 
     @staticmethod
     @requires_auth

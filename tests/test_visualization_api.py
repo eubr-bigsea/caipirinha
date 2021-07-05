@@ -49,3 +49,11 @@ def test_get_visualization(client):
     assert set(v3.keys()) == {'job_id', 'data',
                               'task_id', 'type', 'title', 'id'}
     assert rv.status_code == 200
+
+def test_post_visualization_invalid_form(client):
+    headers = {'X-Auth-Token': str(client.secret)}
+    data = {}
+    rv = client.post('/visualizations', headers=headers, json=data)
+    
+    assert rv.status_code == 401
+

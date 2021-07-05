@@ -26,6 +26,24 @@ def authenticate(msg, params):
     return Response(json.dumps({'status': 'ERROR', 'message': msg}), 401,
                     mimetype="application/json")
 
+def requires_permission(*permissions):
+    def real_requires_permission(f):
+        @wraps(f)
+        def decorated(*_args, **kwargs):
+            fullfill = len(set(permissions).intersection(
+                    set(flask_g.user.permissions))) > 0
+            if fullfill:
+                return f(*_args, **kwargs)
+            else:
+                return Response(
+                    json.dumps({'status': 'ERROR', 'message': 'Permission'}),
+                    401,
+                    mimetype="application/json")
+
+        return decorated
+
+    return real_requires_permission
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*_args, **kwargs):
