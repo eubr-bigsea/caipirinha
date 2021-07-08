@@ -62,8 +62,7 @@ def handle_exception(e):
     response.content_type="application/json"
     return response
 
-def create_app():
-
+def create_app(main_module=False):
     app=Flask(__name__,
          static_url_path = '/static',
          static_folder = 'static')
@@ -158,7 +157,7 @@ def create_app():
         port = int(config.get('port', 5000))
         logger.debug('Running in %s mode', config.get('environment'))
 
-        if __name__ == '__main__':
+        if main_module:
             if config.get('environment', 'dev') == 'dev':
                 app.run(debug=True, port=port)
             else:
@@ -170,4 +169,4 @@ def create_app():
         exit(1)
 
 if __name__ == '__main__':
-    create_app()
+    create_app(True)
