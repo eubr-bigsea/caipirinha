@@ -4,6 +4,7 @@ import json
 from copy import deepcopy
 from marshmallow import Schema, fields, post_load, post_dump
 from marshmallow.validate import OneOf
+from flask_babel import gettext
 from caipirinha.models import *
 
 
@@ -15,6 +16,12 @@ def partial_schema_factory(schema_cls):
             new_field.schema.partial = True
             schema.fields[field_name] = new_field
     return schema
+
+
+def translate_validation(validation_errors):
+    for field, errors in list(validation_errors.items()):
+        validation_errors[field] = [gettext(error) for error in errors]
+        return validation_errors
 
 
 def load_json(str_value):
@@ -31,6 +38,7 @@ class UserCreateRequestSchema(Schema):
     name = fields.String(required=True)
 
 # endregion
+
 
 class BaseSchema(Schema):
     @post_dump
