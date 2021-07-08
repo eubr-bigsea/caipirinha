@@ -2,7 +2,7 @@
 import datetime
 import json
 from copy import deepcopy
-from marshmallow import Schema, fields, post_load, post_dump
+from marshmallow import Schema, fields, post_load, post_dump, EXCLUDE
 from marshmallow.validate import OneOf
 from flask_babel import gettext
 from caipirinha.models import *
@@ -91,6 +91,7 @@ class DashboardListResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class DashboardCreateRequestSchema(BaseSchema):
@@ -126,6 +127,7 @@ class DashboardCreateRequestSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class DashboardItemResponseSchema(BaseSchema):
@@ -174,6 +176,7 @@ class DashboardItemResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationCreateRequestSchema(BaseSchema):
@@ -200,6 +203,7 @@ class VisualizationCreateRequestSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationListResponseSchema(BaseSchema):
@@ -227,6 +231,7 @@ class VisualizationListResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationItemResponseSchema(BaseSchema):
@@ -254,6 +259,7 @@ class VisualizationItemResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationTypeCreateRequestSchema(BaseSchema):
@@ -269,6 +275,7 @@ class VisualizationTypeCreateRequestSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationTypeItemResponseSchema(BaseSchema):
@@ -286,6 +293,7 @@ class VisualizationTypeItemResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationTypeListResponseSchema(BaseSchema):
@@ -303,4 +311,5 @@ class VisualizationTypeListResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
