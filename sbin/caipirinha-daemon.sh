@@ -17,6 +17,8 @@ cmd_option=$1
 
 # if unset set caipirinha_home to directory root
 export CAIPIRINHA_HOME=${CAIPIRINHA_HOME:-$(cd $(dirname $0)/..; pwd)}
+export FLASK_APP=caipirinha.app
+export CAIPIRINHA_CONFIG=${CAIPIRINHA_HOME}/conf/caipirinha-config.yaml
 echo ${CAIPIRINHA_HOME}
 
 # get log directory
@@ -35,8 +37,7 @@ case $cmd_option in
   (start)
     # set python path
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} \
-      python ${CAIPIRINHA_HOME}/caipirinha/manage.py \
-      db upgrade
+      flask db upgrade
     if [ $? -eq 0 ]
     then
       echo "DB migration: successful"
@@ -46,7 +47,7 @@ case $cmd_option in
     fi
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} nohup -- \
       python ${CAIPIRINHA_HOME}/caipirinha/runner/caipirinha_server.py \
-      -c ${CAIPIRINHA_HOME}/conf/caipirinha-config.yaml >> $log 2>&1 < /dev/null &
+      -c ${CAIPIRINHA_CONFIG} >> $log 2>&1 < /dev/null &
     caipirinha_server_pid=$!
     # persist the pid
     echo $caipirinha_server_pid > $pid
@@ -57,8 +58,7 @@ case $cmd_option in
     trap "$0 stop" SIGINT SIGTERM
     # set python path
     PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH} \
-      python ${CAIPIRINHA_HOME}/caipirinha/manage.py \
-      db upgrade
+      flask db upgrade
     # check if the db migration was successful
     if [ $? -eq 0 ]
     then

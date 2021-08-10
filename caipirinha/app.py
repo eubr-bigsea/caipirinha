@@ -62,8 +62,7 @@ def handle_exception(e):
     response.content_type="application/json"
     return response
 
-def create_app():
-
+def create_app(main_module=False):
     app=Flask(__name__,
          static_url_path = '/static',
          static_folder = 'static')
@@ -148,8 +147,13 @@ def create_app():
 
         engine_config = config.get('config', {})
         if engine_config:
-            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
-            app.config['SQLALCHEMY_ENGINE_OPTIONS'].update(engine_config)
+            final_config = {'pool_pre_ping': True}
+            if 'mysql://' in app.config['SQLALCHEMY_DATABASE_URI']:
+                if 'SQLALCHEMY_POOL_SIZE' in engine_config: 
+                    final_config['pool_size'] = engine_config['SQLALCHEMY_POOL_SIZE'] 
+                if 'SQLALCHEMY_POOL_RECYCLE' in engine_config: 
+                    final_config['pool_recycle'] = engine_config['SQLALCHEMY_POOL_RECYCLE']
+            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = final_config
 
         app.config['CAIPIRINHA_CONFIG'] = config
 
@@ -158,7 +162,7 @@ def create_app():
         port = int(config.get('port', 5000))
         logger.debug('Running in %s mode', config.get('environment'))
 
-        if __name__ == '__main__':
+        if main_module:
             if config.get('environment', 'dev') == 'dev':
                 app.run(debug=True, port=port)
             else:
@@ -170,4 +174,4 @@ def create_app():
         exit(1)
 
 if __name__ == '__main__':
-    create_app()
+    create_app(True)

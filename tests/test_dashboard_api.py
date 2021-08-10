@@ -142,7 +142,8 @@ def test_post_dashboard_success(client):
                 'task_id': 'abcde',
                 'title': 'Visualization',
                 'type': {
-                    'id': 131
+                    'id': 131,
+                    'name': 'pie'
                 }
             }
         ]
