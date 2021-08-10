@@ -2,8 +2,9 @@
 import datetime
 import json
 from copy import deepcopy
-from marshmallow import Schema, fields, post_load, post_dump
+from marshmallow import Schema, fields, post_load, post_dump, EXCLUDE, INCLUDE
 from marshmallow.validate import OneOf
+from flask_babel import gettext
 from caipirinha.models import *
 
 
@@ -15,6 +16,15 @@ def partial_schema_factory(schema_cls):
             new_field.schema.partial = True
             schema.fields[field_name] = new_field
     return schema
+
+
+def translate_validation(validation_errors):
+    for field, errors in list(validation_errors.items()):
+        if isinstance(errors, dict):
+            validation_errors[field] = translate_validation(errors)
+        else:
+            validation_errors[field] = [gettext(error) for error in errors]
+        return validation_errors
 
 
 def load_json(str_value):
@@ -32,12 +42,13 @@ class UserCreateRequestSchema(Schema):
 
 # endregion
 
+
 class BaseSchema(Schema):
     @post_dump
     def remove_skip_values(self, data, **kwargs):
         return {
             key: value for key, value in data.items()
-            if value is not None and value != []
+            if value is not None  # Empty lists must be kept!
         }
 
 
@@ -83,6 +94,7 @@ class DashboardListResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class DashboardCreateRequestSchema(BaseSchema):
@@ -118,6 +130,7 @@ class DashboardCreateRequestSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class DashboardItemResponseSchema(BaseSchema):
@@ -166,6 +179,7 @@ class DashboardItemResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationCreateRequestSchema(BaseSchema):
@@ -192,6 +206,7 @@ class VisualizationCreateRequestSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationListResponseSchema(BaseSchema):
@@ -219,6 +234,7 @@ class VisualizationListResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationItemResponseSchema(BaseSchema):
@@ -246,6 +262,7 @@ class VisualizationItemResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationTypeCreateRequestSchema(BaseSchema):
@@ -261,6 +278,7 @@ class VisualizationTypeCreateRequestSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationTypeItemResponseSchema(BaseSchema):
@@ -278,6 +296,7 @@ class VisualizationTypeItemResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class VisualizationTypeListResponseSchema(BaseSchema):
@@ -295,4 +314,5 @@ class VisualizationTypeListResponseSchema(BaseSchema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 

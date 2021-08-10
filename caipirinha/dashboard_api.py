@@ -129,7 +129,8 @@ def get_dashboard(dashboard_id):
             except:
                 ...
         for visualization in result.get('visualizations', []):
-            del visualization['data']
+            if 'data' in visualization:
+                del visualization['data']
         return result
     else:
         return dict(status="ERROR", message="Not found"), 404

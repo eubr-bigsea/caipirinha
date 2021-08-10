@@ -6,6 +6,7 @@ from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
 from flask import current_app, request
 from flask_restful import Resource
+from marshmallow.exceptions import ValidationError
 from .visualization_api import _get_visualization
 
 log = logging.getLogger(__name__)
@@ -25,36 +26,35 @@ class TextListApi(Resource):
             request_schema = VisualizationCreateRequestSchema()
             response_schema = VisualizationItemResponseSchema()
 
-            params = {'title': '', 'type': {'id': MARKDOWN_ID}}
+            params = {'title': '', 'type': {'id': MARKDOWN_ID}, 'task_id': '0'}
             params.update(data)
 
-            form = request_schema.load(params)
             dashboard_id = request.json.get('dashboard', {}).get('id')
+            try:
+                visualization = request_schema.load(params)
+                visualization.title = '' if visualization.title is None \
+                    else visualization.title
+                visualization.type = VisualizationType.query.get(
+                    MARKDOWN_ID)
+                visualization.dashboard = Dashboard.query.get(dashboard_id)
 
-            if form.errors or dashboard_id is None:
-                result, result_code = dict(
-                    status="ERROR", message="Validation error",
-                    errors=form.errors), 400
-            else:
-                try:
-                    visualization = form.data
-                    visualization.title = '' if visualization.title is None \
-                        else visualization.title
-                    visualization.type = VisualizationType.query.get(
-                        MARKDOWN_ID)
-                    visualization.dashboard = Dashboard.query.get(dashboard_id)
-
-                    db.session.add(visualization)
-                    db.session.commit()
-                    result, result_code = response_schema.dump(
-                        visualization).data, 200
-                except Exception as e:
-                    log.exception('Error in POST')
-                    result, result_code = dict(status="ERROR",
-                                               message="Internal error"), 500
-                    if current_app.debug:
-                        result['debug_detail'] = str(e)
-                    db.session.rollback()
+                db.session.add(visualization)
+                db.session.commit()
+                result, result_code = response_schema.dump(
+                    visualization), 200
+            except ValidationError as e:
+                result= {
+                   'status': 'ERROR', 
+                   'message': gettext('Validation error'),
+                   'errors': e.messages
+                }
+            except Exception as e:
+                log.exception('Error in POST')
+                result, result_code = dict(status="ERROR",
+                                           message="Internal error"), 500
+                if current_app.debug:
+                    result['debug_detail'] = str(e)
+                db.session.rollback()
 
         return result, result_code
 
