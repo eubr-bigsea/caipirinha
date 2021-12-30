@@ -86,4 +86,9 @@ ENV/
 .idea
 *.iml
 
+-# Translations
+-*.mo
+-*.pot
+
+
 test.db

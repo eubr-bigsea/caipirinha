@@ -18,7 +18,7 @@ from flask import json
 from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
 from caipirinha.public_dashboard_api import PublicDashboardApi
 from caipirinha.models import db
-from flask import Flask, request
+from flask import Flask, request, g as flask_g
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_babel import get_locale, Babel
 from flask_cors import CORS
@@ -69,6 +69,8 @@ def create_app(main_module=False):
 
     babel=Babel(app)
 
+    app.config['BABEL_TRANSLATION_DIRECTORIES'] = os.path.abspath(
+        'caipirinha/i18n/locales')
     logging.config.fileConfig('logging_config.ini')
 
     app.secret_key='l3m0n4d1'
@@ -130,7 +132,12 @@ def create_app(main_module=False):
 
     @babel.localeselector
     def get_locale():
-        return request.args.get('lang', 'en')
+        user = getattr(flask_g, 'user', None)
+        if user is not None and user.locale:
+            return user.locale
+        else:
+            return request.args.get(
+                'lang', request.accept_languages.best_match(['en', 'pt', 'es']))
 
     sqlalchemy_utils.i18n.get_locale = get_locale
     

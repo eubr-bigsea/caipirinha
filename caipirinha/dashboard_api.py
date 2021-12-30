@@ -9,7 +9,7 @@ from caipirinha.schema import *
 from flask import request, current_app, g as flask_global
 from flask_restful import Resource
 from marshmallow.exceptions import ValidationError
-from gettext import gettext
+from flask_babel import gettext
 
 log = logging.getLogger(__name__)
 
@@ -159,8 +159,8 @@ class DashboardDetailApi(Resource):
         dashboard = Dashboard.query.get(dashboard_id)
         if dashboard is not None:
             try:
-                if (dashboard.user_id == flask_global.user.id or False
-                    ):
+                if (dashboard.user_id == flask_global.user.id or
+                        'ADMINISTRATOR' in flask_global.user.permissions):
                     db.session.delete(dashboard)
                     db.session.commit()
                     result, result_code = dict(status="OK", message=gettext("Deleted")), 201
