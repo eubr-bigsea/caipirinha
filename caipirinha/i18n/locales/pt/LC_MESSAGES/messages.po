@@ -1,0 +1,196 @@
+# Portuguese translations for PROJECT.
+# Copyright (C) 2018 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-12-30 17:47-0300\n"
+"PO-Revision-Date: 2021-12-30 17:48-0300\n"
+"Last-Translator: \n"
+"Language-Team: pt <LL@li.org>\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.5.3\n"
+"X-Generator: Poedit 3.0\n"
+
+#: caipirinha/dashboard_api.py:110 caipirinha/dashboard_api.py:215
+#: caipirinha/text_api.py:48 caipirinha/visualization_api.py:46
+#: caipirinha/visualization_api.py:161
+msgid "Validation error"
+msgstr "Erro de validação"
+
+#: caipirinha/dashboard_api.py:166
+msgid "Deleted"
+msgstr "Excluído"
+
+#: caipirinha/dashboard_api.py:169
+msgid "Permission denied"
+msgstr "Permissão negada"
+
+#: caipirinha/visualization_api.py:23 caipirinha/visualization_api.py:190
+msgid "Missing json in the request body"
+msgstr "JSON ausente no corpo da requisição"
+
+#: caipirinha/visualization_api.py:38
+msgid "Invalid visualization type: {}"
+msgstr "Tipo de visualização inválido: {}"
+
+#: caipirinha/visualization_api.py:53 caipirinha/visualization_api.py:168
+msgid "Internal error"
+msgstr "Erro interno"
+
+#: caipirinha/visualization_api.py:95
+msgid "Not Found"
+msgstr "Não encontrado"
+
+#: caipirinha/visualization_api.py:137
+msgid "Insufficient data"
+msgstr "Dados insuficientes"
+
+#: caipirinha/visualization_api.py:153
+msgid "Updated"
+msgstr "Atualizado"
+
+#: caipirinha/visualization_api.py:157
+msgid "Not found"
+msgstr "Não encontrado"
+
+#, python-format
+#~ msgid "Running in %(mode)s mode"
+#~ msgstr "Executando no modo %(mode)s"
+
+#~ msgid "Please, set LIMONERO_CONFIG environment variable"
+#~ msgstr "Por favor, defina a variável de ambiente LIMONERO_CONFIG"
+
+#~ msgid "Limonero HDFS access not correctly configured (see config 'dfs.client.use.datanode.hostname')"
+#~ msgstr "Acesso ao HDFS pelo Limonero não está configurado corretamente (veja a opção de configuração 'dfs.client.use.datanode.hostname')"
+
+#~ msgid "At least one value for attribute '{attr}' is incompatible with the type '{type}': {v}"
+#~ msgstr "Pelo menos um valor para o atributo '{attr}' é incompatível com o tipo '{type}': {v}"
+
+#~ msgid "Invalid data"
+#~ msgstr "Dados inválidos"
+
+#, python-format
+#~ msgid "%(type)s not found."
+#~ msgstr "%(type)s não foi encontrado(a)."
+
+#~ msgid "Data source"
+#~ msgstr "Fonte de dados"
+
+#~ msgid "You are not authorized to perform this action"
+#~ msgstr "Você não tem permissão para realizar esta ação"
+
+#, python-format
+#~ msgid "%(what)s was successfuly deleted"
+#~ msgstr "%(what)s foi excluído(a) com sucesso"
+
+#, python-format
+#~ msgid "%(what)s was successfuly updated"
+#~ msgstr "%(what)s foi atualizado(a) com sucesso"
+
+#~ msgid "Missing required parameters"
+#~ msgstr "Parâmetros obrigatórios ausentes"
+
+#~ msgid "File already exists"
+#~ msgstr "Arquivo já existe"
+
+#~ msgid "Imported in Limonero"
+#~ msgstr "Importado pelo Limonero"
+
+#~ msgid "Data source does not have a command specified"
+#~ msgstr "Fonte de dados não tem um comando especificado para ela"
+
+#~ msgid "Could not connect to database"
+#~ msgstr "Não foi possível conectar à base de dados"
+
+#, python-format
+#~ msgid "Unsupported database: %(what)s"
+#~ msgstr "Serviço de banco de dados não suportado: %(what)s"
+
+#, python-format
+#~ msgid "Cannot infer the schema: %(what)s"
+#~ msgstr "Não é possível inferir o esquema: %(what)s"
+
+#~ msgid "Cannot infer the schema for shapefile (invalid Zip file content)."
+#~ msgstr "Não é possível inferir o esquema para arquivos shapefile (conteúdo inválido para o arquivo ZIP)"
+
+#, python-format
+#~ msgid "Cannot infer the schema for format %(format)s"
+#~ msgstr "Não é possível inferir o esquema da fonte de dados para o formato %(format)s"
+
+#~ msgid "Invalid CSV encoding"
+#~ msgstr "Codificação inválida para arquivo CSV"
+
+#~ msgid "Internal error, try later"
+#~ msgstr "Erro interno, tente mais tarde"
+
+#~ msgid "row"
+#~ msgstr "linha"
+
+#~ msgid "<Invalid data>: `{}`"
+#~ msgstr "<Dados inválidos>: `{}`"
+
+#~ msgid "Model"
+#~ msgstr "Modelo"
+
+#, python-format
+#~ msgid "%(what)s saved with success"
+#~ msgstr "%(what)s foi salvo(a) com sucesso"
+
+#, python-format
+#~ msgid "Error deleting %(what)s."
+#~ msgstr "Erro ao tentar excluir %(what)s."
+
+#~ msgid "Privacy"
+#~ msgstr "Privacidade"
+
+#~ msgid "Storage"
+#~ msgstr "Armazenamento"
+
+#, python-format
+#~ msgid "Listing %(name)s"
+#~ msgstr "Listando %(name)s"
+
+#, python-format
+#~ msgid "Adding %s"
+#~ msgstr "Adicionando %s"
+
+#, python-format
+#~ msgid "Retrieving %s (id=%s)"
+#~ msgstr "Recuperando %s (id=%s)"
+
+#, python-format
+#~ msgid "%(name)s not found (id=%(id)s)"
+#~ msgstr "%(name)s não foi encontrado(a) (id=%(id)s)"
+
+#, python-format
+#~ msgid "%(name)s deleted with success!"
+#~ msgstr "%(name)s foi apagado(a) com sucesso"
+
+#, python-format
+#~ msgid "%(name)s not found (id=%(id)s)."
+#~ msgstr "%(name)s não foi encontrado(a) (%(id)s)."
+
+#~ msgid "Insufficient data."
+#~ msgstr "Dados insuficientes."
+
+#, python-format
+#~ msgid "Updating %s (id=%s)"
+#~ msgstr "Atualizando %s (id=%s)"
+
+#, python-format
+#~ msgid "%(n)s (id=%(id)s) was updated with success!"
+#~ msgstr "%(n)s (id=%(id)s) foi salvo(a) com sucesso"
+
+#~ msgid "Missing data for required field."
+#~ msgstr "Dados obrigatórios ausentes."
+
+#~ msgid "Invalid CSV format"
+#~ msgstr "Formato inválido para CSV"
