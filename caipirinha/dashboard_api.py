@@ -6,7 +6,7 @@ import uuid
 from sqlalchemy import or_
 from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
-from flask import request, current_app
+from flask import request, current_app, g as flask_global
 from flask_restful import Resource
 from marshmallow.exceptions import ValidationError
 from gettext import gettext
@@ -159,9 +159,14 @@ class DashboardDetailApi(Resource):
         dashboard = Dashboard.query.get(dashboard_id)
         if dashboard is not None:
             try:
-                db.session.delete(dashboard)
-                db.session.commit()
-                result, result_code = dict(status="OK", message="Deleted"), 201
+                if (dashboard.user_id == flask_global.user.id or False
+                    ):
+                    db.session.delete(dashboard)
+                    db.session.commit()
+                    result, result_code = dict(status="OK", message=gettext("Deleted")), 201
+                else:
+                    result, result_code = dict(status='ERROR', 
+                        message=gettext('Permission denied')), 400
             except Exception as e:
                 log.exception('Error in DELETE')
                 result, result_code = dict(status="ERROR",
