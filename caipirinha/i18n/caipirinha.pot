@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-12-30 17:39-0300\n"
+"POT-Creation-Date: 2021-12-30 17:47-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,4 +16,46 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+
+#: caipirinha/dashboard_api.py:110 caipirinha/dashboard_api.py:215
+#: caipirinha/text_api.py:48 caipirinha/visualization_api.py:46
+#: caipirinha/visualization_api.py:161
+msgid "Validation error"
+msgstr ""
+
+#: caipirinha/dashboard_api.py:166
+msgid "Deleted"
+msgstr ""
+
+#: caipirinha/dashboard_api.py:169
+msgid "Permission denied"
+msgstr ""
+
+#: caipirinha/visualization_api.py:23 caipirinha/visualization_api.py:190
+msgid "Missing json in the request body"
+msgstr ""
+
+#: caipirinha/visualization_api.py:38
+msgid "Invalid visualization type: {}"
+msgstr ""
+
+#: caipirinha/visualization_api.py:53 caipirinha/visualization_api.py:168
+msgid "Internal error"
+msgstr ""
+
+#: caipirinha/visualization_api.py:95
+msgid "Not Found"
+msgstr ""
+
+#: caipirinha/visualization_api.py:137
+msgid "Insufficient data"
+msgstr ""
+
+#: caipirinha/visualization_api.py:153
+msgid "Updated"
+msgstr ""
+
+#: caipirinha/visualization_api.py:157
+msgid "Not found"
+msgstr ""
 
