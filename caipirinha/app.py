@@ -179,6 +179,7 @@ def create_app(main_module=False):
     else:
         logger.error('Please, set CAIPIRINHA_CONFIG environment variable')
         exit(1)
+    return app
 
 if __name__ == '__main__':
     create_app(True)
