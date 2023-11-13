@@ -1,0 +1,46 @@
+#!/usr/bin/env sh
+
+function start_server
+{
+	python -m gunicorn 'caipirinha.app:create_app()' -b 0.0.0.0:$CAIPIRINHA_PORT
+}
+
+function db_migrate
+{
+  flask db upgrade
+
+  if [ $? -eq 0 ]
+  then
+    echo "DB migration: successful"
+  else
+    echo "Error on DB migration"
+    exit 1
+  fi
+}
+
+# if unset set caipirinha_home to caipirinha root dir, without ./sbin
+export CAIPIRINHA_HOME=${CAIPIRINHA_HOME:-$(cd $(dirname $0)/..; pwd)}
+export CAIPIRINHA_CONFIG=${CAIPIRINHA_CONFIG:-${CAIPIRINHA_HOME}/conf/caipirinha.yaml}
+export CAIPIRINHA_PORT=$(grep port $CAIPIRINHA_CONFIG |sed 's/\s*port:\s*//g')
+
+export PYTHONPATH=${CAIPIRINHA_HOME}:${PYTHONPATH}
+export FLASK_APP=caipirinha.app
+
+CMD=$1
+case $CMD in
+
+  (server)
+    db_migrate
+    start_server
+    ;;
+
+  (worker)
+    python -m flask rq worker \
+      --logging_level DEBUG 
+    ;;
+
+  (*)
+    echo "Usage: $0 (server|worker)"
+    exit 1
+    ;;
+esac

@@ -1,15 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# noinspection PyBroadException
-try:
-    import eventlet
-    eventlet.monkey_patch(all=True)
-except:
-    pass
-
 import logging
 import logging.config
-import eventlet.wsgi
 import os
 import sqlalchemy_utils
 import yaml
@@ -172,13 +163,12 @@ def create_app(main_module=False):
         if main_module:
             if config.get('environment', 'dev') == 'dev':
                 app.run(debug=True, port=port)
-            else:
-                eventlet.wsgi.server(eventlet.listen(('', port)), app)
         else:
             return app
     else:
         logger.error('Please, set CAIPIRINHA_CONFIG environment variable')
         exit(1)
+    return app
 
 if __name__ == '__main__':
     create_app(True)

@@ -15,5 +15,8 @@ ENV CAIPIRINHA_CONFIG $CAIPIRINHA_HOME/conf/caipirinha-config.yaml
 COPY --from=pip_builder /usr/local /usr/local
 WORKDIR $CAIPIRINHA_HOME
 COPY . $CAIPIRINHA_HOME/
+COPY bin/entrypoint /usr/local/bin/
+RUN apk add --no-cache dumb-init
 
-CMD ["/usr/local/caipirinha/sbin/caipirinha-daemon.sh", "docker"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/local/bin/entrypoint"]
+CMD ["server"]
