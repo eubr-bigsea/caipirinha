@@ -1,4 +1,3 @@
-#Dependencies
 eventlet==0.31.0
 Flask==2.2.5
 Flask-Babel==2.0.0
