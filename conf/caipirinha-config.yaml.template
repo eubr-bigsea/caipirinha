@@ -2,6 +2,7 @@
 
 caipirinha:
     debug: true
+    secret: 2023
     servers:
         database_url: mysql+pymysql://user:password@server:port/database
         redis_url: redis://redis_server:6379
