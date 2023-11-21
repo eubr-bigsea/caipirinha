@@ -5,7 +5,7 @@ import logging
 from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
 from flask import current_app, request
-from flask_restful import Resource
+from flask.views import MethodView
 from marshmallow.exceptions import ValidationError
 from .visualization_api import _get_visualization
 
@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 MARKDOWN_ID = 72
 
 
-class TextListApi(Resource):
+class TextListApi(MethodView):
     """ REST API for Text"""
 
     @staticmethod
@@ -59,7 +59,7 @@ class TextListApi(Resource):
         return result, result_code
 
 
-class TextDetailApi(Resource):
+class TextDetailApi(MethodView):
     """ REST API for a single instance of class Text """
 
     @staticmethod

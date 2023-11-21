@@ -5,14 +5,14 @@ import logging
 from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
 from flask import current_app, request
-from flask_restful import Resource
+from flask.views import MethodView
 from flask_babel import gettext
 from marshmallow.exceptions import ValidationError
 
 log = logging.getLogger(__name__)
 
 
-class VisualizationListApi(Resource):
+class VisualizationListApi(MethodView):
     """ REST API for Visualization"""
 
     @staticmethod
@@ -96,7 +96,7 @@ def _get_visualization(visualization, job_id, task_id):
 
     return result
 
-class VisualizationDetailApi(Resource):
+class VisualizationDetailApi(MethodView):
     """ REST API for a single instance of class Visualization """
 
     @staticmethod
@@ -171,7 +171,7 @@ class VisualizationDetailApi(Resource):
                 db.session.rollback()
         return result, result_code
 
-class PublicVisualizationApi(Resource):
+class PublicVisualizationApi(MethodView):
     @staticmethod
     def get(job_id, task_id, vis_id):
         if task_id in ['0', 'undefined']:

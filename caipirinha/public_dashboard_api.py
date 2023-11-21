@@ -2,11 +2,11 @@
 
 from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
-from flask_restful import Resource
+from flask.views import MethodView
 from .dashboard_api import get_dashboard
 
 
-class PublicDashboardApi(Resource):
+class PublicDashboardApi(MethodView):
     @staticmethod
     def get(h):
         return get_dashboard(Dashboard.query.filter(

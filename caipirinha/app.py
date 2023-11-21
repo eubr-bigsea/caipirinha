@@ -13,17 +13,20 @@ from flask import Flask, request, g as flask_g
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_babel import get_locale, Babel
 from flask_cors import CORS
-from flask_restful import Api, abort
 from flask_migrate import Migrate
 from caipirinha.visualization_api import (VisualizationDetailApi,
     VisualizationListApi, PublicVisualizationApi)
 from caipirinha.text_api import TextListApi, TextDetailApi
 
+from flask_smorest import Api, Blueprint, abort
+
 from sqlalchemy import exc
 from sqlalchemy import event
 from sqlalchemy.pool import Pool
 
-@ event.listens_for(Pool, "checkout")
+from dotenv import load_dotenv
+
+@event.listens_for(Pool, "checkout")
 def ping_connection(dbapi_connection, connection_record, connection_proxy):
     cursor=dbapi_connection.cursor()
     try:
@@ -53,12 +56,21 @@ def handle_exception(e):
     response.content_type="application/json"
     return response
 
+def get_locale():
+    user = getattr(flask_g, 'user', None)
+    if user is not None and user.locale:
+        return user.locale
+    else:
+        return request.args.get(
+            'lang', request.accept_languages.best_match(['en', 'pt', 'es']))
+
 def create_app(main_module=False):
+    load_dotenv()
     app=Flask(__name__,
          static_url_path = '/static',
          static_folder = 'static')
 
-    babel=Babel(app)
+    babel=Babel(app, locale_selector=get_locale)
 
     app.config['BABEL_TRANSLATION_DIRECTORIES'] = os.path.abspath(
         'caipirinha/i18n/locales')
@@ -92,6 +104,9 @@ def create_app(main_module=False):
     app.register_error_handler(404, handle_exception)
 
     # API
+    app.config["API_TITLE"] = "Caipirinha API"
+    app.config["API_VERSION"] = "v1"
+    app.config["OPENAPI_VERSION"] = "3.0.2"
     api = Api(app)
     
     mappings = {
@@ -121,14 +136,6 @@ def create_app(main_module=False):
 
     migrate = Migrate(app, db)
 
-    @babel.localeselector
-    def get_locale():
-        user = getattr(flask_g, 'user', None)
-        if user is not None and user.locale:
-            return user.locale
-        else:
-            return request.args.get(
-                'lang', request.accept_languages.best_match(['en', 'pt', 'es']))
 
     sqlalchemy_utils.i18n.get_locale = get_locale
     
@@ -136,7 +143,7 @@ def create_app(main_module=False):
         with open(config_file) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)['caipirinha']
 
-        app.config["RESTFUL_JSON"] = {"cls": app.json_encoder}
+        ###app.config["RESTFUL_JSON"] = {"cls": app.json_encoder}
 
         server_config = config.get('servers', {})
         app.config['SQLALCHEMY_DATABASE_URI'] = server_config.get(

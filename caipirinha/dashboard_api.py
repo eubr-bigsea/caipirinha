@@ -7,7 +7,7 @@ from sqlalchemy import or_
 from caipirinha.app_auth import requires_auth
 from caipirinha.schema import *
 from flask import request, current_app, g as flask_global
-from flask_restful import Resource
+from flask.views import MethodView
 from marshmallow.exceptions import ValidationError
 from flask_babel import gettext
 
@@ -19,7 +19,7 @@ def _get_dashboards(dashboards):
     return dashboards
 
 
-class DashboardListApi(Resource):
+class DashboardListApi(MethodView):
     """ REST API for listing class Dashboard """
 
     @staticmethod
@@ -136,14 +136,14 @@ def get_dashboard(dashboard_id):
         return dict(status="ERROR", message="Not found"), 404
 
 
-class PublicDashboardApi(Resource):
+class PublicDashboardApi(MethodView):
     @staticmethod
     def get(h):
         return get_dashboard(Dashboard.query.filter(
             Dashboard.hash==h).first())
 
 
-class DashboardDetailApi(Resource):
+class DashboardDetailApi(MethodView):
     """ REST API for a single instance of class Dashboard """
 
     @staticmethod
