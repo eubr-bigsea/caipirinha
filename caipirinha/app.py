@@ -10,7 +10,6 @@ from caipirinha.dashboard_api import DashboardDetailApi, DashboardListApi
 from caipirinha.public_dashboard_api import PublicDashboardApi
 from caipirinha.models import db
 from flask import Flask, request, g as flask_g
-from flask_swagger_ui import get_swaggerui_blueprint
 from flask_babel import get_locale, Babel
 from flask_cors import CORS
 from flask_restful import Api, abort
@@ -69,25 +68,6 @@ def create_app(main_module=False):
     # CORS
     CORS(app, resources = {r"/*": {"origins": "*"}})
 
-    # Swagger
-    swaggerui_blueprint=get_swaggerui_blueprint(
-        '/api/docs',  
-        '/static/swagger.yaml',
-        config={  # Swagger UI config overrides
-            'app_name': "Lemonade Caipirinha"
-        },
-        # oauth_config={  # OAuth config. See https://github.com/swagger-api/swagger-ui#oauth2-configuration .
-        #    'clientId': "your-client-id",
-        #    'clientSecret': "your-client-secret-if-required",
-        #    'realm': "your-realms",
-        #    'appName': "your-app-name",
-        #    'scopeSeparator': " ",
-        #    'additionalQueryStringParams': {'test': "hello"}
-        # }
-    )
-    
-    app.register_blueprint(swaggerui_blueprint)
-    
     # Error handling
     app.register_error_handler(404, handle_exception)
 

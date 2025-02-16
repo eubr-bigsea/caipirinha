@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 function start_server
 {
@@ -36,7 +36,7 @@ case $CMD in
 
   (worker)
     python -m flask rq worker \
-      --logging_level DEBUG 
+      --logging_level DEBUG
     ;;
 
   (*)
