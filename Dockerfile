@@ -1,4 +1,4 @@
-FROM python:3.9.5-alpine3.14 as base
+FROM python:3.9.25-alpine3.22 as base
 
 FROM base as pip_builder
 RUN apk add --no-cache gcc musl-dev g++ postgresql-dev
